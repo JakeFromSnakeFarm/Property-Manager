@@ -33,6 +33,37 @@ let pendingSave = false;
 const fmt = Metrics.formatCurrency;
 const fmtPct = Metrics.formatPercent;
 
+const SCROLL_HINT_HTML =
+  '<div class="scroll-strip-hint" aria-hidden="true">' +
+  '<svg class="scroll-strip-arrow icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
+  '<path d="m9 18 6-6-6-6"/></svg></div>';
+
+function bindScrollHint(wrap) {
+  const strip = wrap.querySelector('.scroll-strip');
+  if (!strip) return;
+
+  const update = () => {
+    const overflow = strip.scrollWidth > strip.clientWidth + 2;
+    const atStart = strip.scrollLeft <= 4;
+    wrap.classList.toggle('has-overflow', overflow);
+    wrap.classList.toggle('is-at-start', atStart);
+  };
+
+  if (!wrap.dataset.scrollBound) {
+    wrap.dataset.scrollBound = '1';
+    strip.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    if (typeof ResizeObserver !== 'undefined') {
+      new ResizeObserver(update).observe(strip);
+    }
+  }
+  update();
+}
+
+function initScrollHints() {
+  document.querySelectorAll('.scroll-strip-wrap').forEach(bindScrollHint);
+}
+
 async function api(action, { method = 'GET', body = null, isForm = false } = {}) {
   const url = `${API_URL}?action=${encodeURIComponent(action)}`;
   const headers = isForm ? {} : { 'Content-Type': 'application/json' };
@@ -99,7 +130,9 @@ function renderCards() {
     group.appendChild(heading);
 
     const row = document.createElement('div');
-    row.className = 'group-row';
+    row.className = 'group-row scroll-strip';
+    const rowWrap = document.createElement('div');
+    rowWrap.className = 'scroll-strip-wrap';
     const itemsInGroup = byStatus.get(status);
     itemsInGroup.sort((a, b) => {
       if (DONE_STATUS_SET.has(status)) {
@@ -172,7 +205,10 @@ function renderCards() {
       row.appendChild(node);
     }
 
-    group.appendChild(row);
+    rowWrap.appendChild(row);
+    rowWrap.insertAdjacentHTML('beforeend', SCROLL_HINT_HTML);
+    bindScrollHint(rowWrap);
+    group.appendChild(rowWrap);
     els.cards.appendChild(group);
   }
 
@@ -230,6 +266,8 @@ function updateMetrics() {
     } else {
       rateWrap.hidden = true;
     }
+    const metricsWrap = document.querySelector('.scroll-strip-wrap--metrics');
+    if (metricsWrap) bindScrollHint(metricsWrap);
   }
 
   if (hoursEl) hoursEl.textContent = Metrics.formatHours(m.totalHoursAll);
@@ -665,6 +703,8 @@ async function processImageForWebp(file) {
   const thumbBlob = await new Promise((resolve, reject) => tcan.toBlob(b => b ? resolve(b) : reject(new Error('Thumb failed')), 'image/webp', 0.8));
   return { webpBlob, thumbBlob, width: w, height: h, takenAt: null };
 }
+
+initScrollHints();
 
 loadItems().catch(err => {
   console.error(err);
