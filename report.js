@@ -116,12 +116,6 @@ function renderSupporting(m, legacy, config) {
     });
   }
 
-  tiles.push({
-    label: 'Contractor Cost Handled',
-    value: fmt(m.contractorCostAvoided),
-    sub: 'market value of completed work',
-  });
-
   if (m.valueAddedLowTotal > 0 || m.valueAddedHighTotal > 0) {
     tiles.push({
       label: 'Property Value Added',
@@ -130,11 +124,11 @@ function renderSupporting(m, legacy, config) {
     });
   }
 
-  if (m.potentialSavingsTotal > 0) {
+  if (m.completedCount > 0) {
     tiles.push({
-      label: 'Estimated Savings',
-      value: fmt(m.potentialSavingsTotal),
-      sub: 'open work (not confirmed)',
+      label: 'Savings on Completed Work',
+      value: fmt(m.totalSavings),
+      sub: `${m.completedCount} repair${m.completedCount === 1 ? '' : 's'} · money already saved vs contractor est`,
     });
   }
 
