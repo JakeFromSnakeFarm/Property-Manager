@@ -202,6 +202,7 @@
     let totalPartsCost = 0;
     let totalMarketCompleted = 0;
     let totalLaborHours = 0;
+    let totalHoursAll = 0;
     let valueAddedLowTotal = 0;
     let valueAddedHighTotal = 0;
     let completedCount = 0;
@@ -210,7 +211,9 @@
     for (const item of items || []) {
       const market = marketEstimate(item);
       const reimbursed = amountReimbursed(item);
+      const hours = num(item.labor_time);
       const done = isDone(item.status);
+      totalHoursAll += hours;
 
       if (done) {
         completedCount += 1;
@@ -219,7 +222,7 @@
         contractorCostAvoided += market;
         totalPartsCost += num(item.parts_cost);
         totalMarketCompleted += market;
-        totalLaborHours += num(item.labor_time);
+        totalLaborHours += hours;
         valueAddedLowTotal += valueAddedLow(item);
         valueAddedHighTotal += valueAddedHigh(item);
       } else {
@@ -261,8 +264,16 @@
       valueAddedLowTotal,
       valueAddedHighTotal,
       totalLaborHours,
+      totalHoursAll,
       config: cfg,
     };
+  }
+
+  function formatHours(n) {
+    const v = num(n);
+    const rounded = Math.round(v * 10) / 10;
+    const label = rounded === 1 ? 'hr' : 'hrs';
+    return Number.isInteger(rounded) ? `${rounded} ${label}` : `${rounded} ${label}`;
   }
 
   function itemMetrics(item, config, now = new Date()) {
@@ -296,12 +307,21 @@
     };
   }
 
-  function needsDataReview(item) {
+  function dataReviewReasons(item) {
+    const reasons = [];
     const market = marketEstimate(item);
     const desc = String(item?.description || '');
-    const hasEstimateInText = /\$\d+/.test(desc) && market === 0;
-    const reimbMismatch = item?.asking_for_reimbursement && amountReimbursed(item) === 0 && market > 0;
-    return hasEstimateInText || reimbMismatch;
+    if (/\$\d+/.test(desc) && market === 0) {
+      reasons.push('Estimate in description but cost fields are empty');
+    }
+    if (item?.asking_for_reimbursement && amountReimbursed(item) === 0 && market > 0) {
+      reasons.push('Reimbursement flagged but amount is zero');
+    }
+    return reasons;
+  }
+
+  function needsDataReview(item) {
+    return dataReviewReasons(item).length > 0;
   }
 
   global.Metrics = {
@@ -319,11 +339,13 @@
     valueAddedHigh,
     formatCurrency,
     formatPercent,
+    formatHours,
     formatValueRange,
     computeMetrics,
     computeLegacyMetrics,
     computeMetricsBreakdown,
     itemMetrics,
+    dataReviewReasons,
     needsDataReview,
   };
 })(typeof window !== 'undefined' ? window : globalThis);

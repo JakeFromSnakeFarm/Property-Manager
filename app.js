@@ -20,8 +20,6 @@ const els = {
   filterPriority: document.getElementById('filter-priority'),
   resolutionWrap: document.getElementById('resolution-wrap'),
   saveIndicator: document.getElementById('save-indicator'),
-  btnToggleFilters: document.getElementById('btn-toggle-filters'),
-  filtersPanel: document.getElementById('filters-panel'),
   dataQuality: document.getElementById('data-quality'),
 };
 
@@ -114,6 +112,10 @@ function renderCards() {
       const node = tpl.content.firstElementChild.cloneNode(true);
       const im = Metrics.itemMetrics(it, config);
       node.dataset.priority = it.priority || 'normal';
+      node.dataset.itemId = it.id;
+      if (Metrics.needsDataReview(it)) {
+        node.classList.add('needs-review');
+      }
 
       const thumbWrap = node.querySelector('.card-thumb');
       const imgTag = thumbWrap?.querySelector('img');
@@ -121,58 +123,34 @@ function renderCards() {
       if (firstImg && imgTag) {
         imgTag.src = firstImg.thumb_url || firstImg.url;
         imgTag.alt = it.title || 'Image';
-        thumbWrap.hidden = false;
-      } else if (thumbWrap) {
-        thumbWrap.hidden = true;
+        thumbWrap.classList.add('has-photo');
       }
 
-      node.querySelector('.title').textContent = it.title || '';
-      node.querySelector('.desc').textContent = it.description || '';
+      node.querySelector('.title').textContent = it.title || 'Untitled';
+      node.querySelector('.desc').textContent = it.description || ' ';
       const pEl = node.querySelector('.badge.priority');
       pEl.dataset.v = it.priority || 'normal';
       pEl.textContent = badgeText(it.priority);
       node.querySelector('.badge.category').textContent = badgeText(it.category || 'misc');
-      node.querySelector('.room').textContent = it.room || '';
+      node.querySelector('.room').textContent = it.room || '—';
       node.querySelector('.due').textContent = it.due_by ? `Due ${it.due_by}` : '';
 
       const savedBanner = node.querySelector('.card-saved-banner');
       const savedAmount = node.querySelector('.card-saved-amount');
       const savedBreakdown = node.querySelector('.card-saved-breakdown');
-      const savedEl = node.querySelector('.card-saved');
-      const reimbEl = node.querySelector('.card-reimb');
-      const metricsRow = node.querySelector('.card-metrics');
+      savedBanner.classList.remove('is-est', 'is-muted');
 
       if (im.done && im.market > 0) {
-        savedBanner.hidden = false;
         savedAmount.textContent = `Saved ${fmt(im.saved)}`;
         savedBreakdown.textContent = `${fmt(im.market)} contractor − ${fmt(im.reimbursed)} reimbursed`;
-        if (metricsRow) metricsRow.hidden = true;
+      } else if (!im.done && im.potential > 0) {
+        savedBanner.classList.add('is-est');
+        savedAmount.textContent = `Est. ${fmt(im.potential)}`;
+        savedBreakdown.textContent = `${fmt(im.market)} contractor − ${fmt(im.reimbursed)} billed`;
       } else {
-        savedBanner.hidden = true;
-        if (metricsRow) metricsRow.hidden = false;
-        savedEl.className = 'card-saved';
-        savedEl.style.color = '';
-        if (!im.done && im.potential > 0) {
-          savedEl.textContent = `Est. ${fmt(im.potential)}`;
-          savedEl.style.color = 'var(--warn)';
-          savedEl.hidden = false;
-        } else {
-          savedEl.hidden = true;
-        }
-        if (im.reimbursed > 0) {
-          reimbEl.textContent = `Reimb ${fmt(im.reimbursed)}`;
-          reimbEl.hidden = false;
-        } else {
-          reimbEl.hidden = true;
-        }
-      }
-
-      const valChip = node.querySelector('.value-chip');
-      if (im.valLow > 0 || im.valHigh > 0) {
-        valChip.textContent = `+${Metrics.formatValueRange(im.valLow, im.valHigh)} value`;
-        valChip.hidden = false;
-      } else {
-        valChip.hidden = true;
+        savedBanner.classList.add('is-muted');
+        savedAmount.textContent = im.done ? 'No savings recorded' : 'Estimate pending';
+        savedBreakdown.textContent = im.market > 0 ? fmt(im.market) : ' ';
       }
 
       node.addEventListener('click', () => openModal(it.id));
@@ -190,7 +168,6 @@ function renderCards() {
   }
 
   updateMetrics();
-  updateDataQuality();
 }
 
 function groupOrder(status) {
@@ -210,7 +187,6 @@ function toTitle(s) {
 function updateMetrics() {
   const legacy = Metrics.computeLegacyMetrics(items, config);
   const m = Metrics.computeMetrics(items, config);
-  const breakdown = Metrics.computeMetricsBreakdown(items, config);
 
   const perDayEl = document.getElementById('metric-perday');
   const perDaySub = document.getElementById('metric-perday-sub');
@@ -219,20 +195,19 @@ function updateMetrics() {
   const valueEl = document.getElementById('metric-value-added');
   const rateWrap = document.getElementById('metric-rate-wrap');
   const rateEl = document.getElementById('metric-rate');
+  const hoursEl = document.getElementById('metric-hours');
+  const hoursSub = document.getElementById('metric-hours-sub');
+  const completedCountEl = document.getElementById('metric-completed-count');
   const completedSavedEl = document.getElementById('metric-completed-saved');
-  const completedSubEl = document.getElementById('metric-completed-sub');
-  const openEstEl = document.getElementById('metric-open-est');
 
-  // Current cost/day = completed reimbursements only
   if (perDayEl) perDayEl.textContent = fmt(m.costPerDay);
   if (perDaySub) {
     perDaySub.textContent = `${fmt(m.totalReimbursed)} completed reimbursements · ${m.days} days`;
   }
 
-  // Money to be saved = legacy total (all projects, past + future)
   if (savedEl) savedEl.textContent = fmt(legacy.moneySaved);
   if (savedSub) {
-    savedSub.textContent = `${fmt(legacy.totalMarketAll)} contractor est − ${fmt(legacy.totalReimbFlagged)} reimbursed · past & future`;
+    savedSub.textContent = `${fmt(legacy.totalMarketAll)} contractor est − ${fmt(legacy.totalReimbFlagged)} reimbursed`;
   }
 
   if (valueEl) {
@@ -248,127 +223,59 @@ function updateMetrics() {
     }
   }
 
+  if (hoursEl) hoursEl.textContent = Metrics.formatHours(m.totalHoursAll);
+  if (hoursSub) {
+    hoursSub.textContent = `${Metrics.formatHours(m.totalLaborHours)} completed · ${Metrics.formatHours(m.totalHoursAll - m.totalLaborHours)} open`;
+  }
+
+  if (completedCountEl) {
+    completedCountEl.textContent = String(m.completedCount);
+  }
   if (completedSavedEl) {
-    completedSavedEl.textContent = fmt(m.totalSavings);
-  }
-  if (completedSubEl) {
-    completedSubEl.textContent = `${m.completedCount} completed · ${fmt(m.contractorCostAvoided)} contractor − ${fmt(m.totalReimbursed)} reimbursed`;
-  }
-  if (openEstEl) {
-    openEstEl.textContent = m.openCount > 0
-      ? `${m.openCount} open · ${fmt(m.potentialSavingsTotal)} est. savings remaining`
-      : 'All tracked projects completed';
+    completedSavedEl.textContent = `${fmt(m.totalSavings)} saved`;
   }
 
-  const partsEl = document.getElementById('insight-parts');
-  const netEl = document.getElementById('insight-net-daily');
-  const contractorEl = document.getElementById('insight-contractor');
-  const handymanEl = document.getElementById('insight-handyman');
-  const potentialEl = document.getElementById('insight-potential');
-
-  if (partsEl) {
-    if (m.partsShare >= 60) {
-      partsEl.hidden = false;
-      partsEl.textContent = `Parts were ${Math.round(m.partsShare)}% of market cost`;
-    } else {
-      partsEl.hidden = true;
-    }
-  }
-
-  if (netEl) {
-    netEl.textContent = m.netDailyCost < 0
-      ? `Net daily: ${fmt(Math.abs(m.netDailyCost))} property gain`
-      : `Net daily cost: ${fmt(m.netDailyCost)} after value added`;
-  }
-
-  if (contractorEl) {
-    contractorEl.textContent = `${fmt(m.contractorCostAvoided)} contractor cost handled`;
-  }
-
-  if (handymanEl) {
-    handymanEl.textContent = m.handymanDaysEquivalent >= 1
-      ? `≈ ${Math.round(m.handymanDaysEquivalent)} handyman days saved`
-      : `Effective rate: ${fmt(m.effectiveHourlyRate)}/hr vs ${fmt(config.handyman_hourly_rate)}/hr`;
-  }
-
-  if (potentialEl) {
-    if (m.potentialSavingsTotal > 0) {
-      potentialEl.hidden = false;
-      potentialEl.textContent = `Estimated savings (open): ${fmt(m.potentialSavingsTotal)}`;
-    } else {
-      potentialEl.hidden = true;
-    }
-  }
-
-  renderMetricsDebug(breakdown);
+  updateDataQuality();
 }
 
-function renderMetricsDebug(b) {
-  const el = document.getElementById('metrics-debug-body');
-  if (!el) return;
-  const { legacy, current, summary, rows } = b;
+function updateDataQuality() {
+  if (!els.dataQuality) return;
+  const summaryEl = document.getElementById('data-quality-summary');
+  const listEl = document.getElementById('data-quality-list');
+  const flagged = items.filter(Metrics.needsDataReview);
 
-  const rowHtml = rows.map((r) => `
-    <tr>
-      <td>${escapeHtml(r.title)}</td>
-      <td>${escapeHtml(r.status)}</td>
-      <td>${r.reimbFlag ? 'yes' : '—'}</td>
-      <td class="num">${fmt(r.market)}</td>
-      <td class="num">${fmt(r.reimbursed)}</td>
-      <td class="num">${r.done ? fmt(r.itemSaved) : fmt(r.estimatedOpen)}</td>
-      <td>${r.done ? 'done' : 'open'}</td>
-    </tr>
-  `).join('');
+  if (!flagged.length) {
+    els.dataQuality.hidden = true;
+    if (listEl) listEl.innerHTML = '';
+    return;
+  }
 
-  el.innerHTML = `
-    <p class="debug-note">Hero: <strong>Your Savings %</strong> = (all market − all my_cost) ÷ all market. <strong>Completed Repairs</strong> saved = sum(completed market − completed my_cost). Expand below for full breakdown.</p>
+  els.dataQuality.hidden = false;
+  if (summaryEl) {
+    summaryEl.textContent = `${flagged.length} item${flagged.length === 1 ? '' : 's'} may need cost review. Click a card below to fix it.`;
+  }
 
-    <div class="debug-block">
-      <h4>Legacy — hero totals (original app)</h4>
-      <p class="debug-formula">${escapeHtml(summary.legacyFormula)}</p>
-      <p class="debug-formula">${escapeHtml(summary.legacyPerDayFormula)}</p>
-      <p class="debug-note">Includes market estimates from <em>all</em> items (${legacy.itemCount}). Subtracts only <code>my_cost</code> where “requesting reimbursement” is checked (${fmt(legacy.totalReimbFlagged)}). All-items my_cost sum (any flag): ${fmt(legacy.totalMyCostAll)}.</p>
-    </div>
+  if (listEl) {
+    listEl.innerHTML = flagged.map((it) => {
+      const reasons = Metrics.dataReviewReasons(it).join(' · ');
+      const title = escapeHtml(it.title || 'Untitled');
+      return `<li>
+        <button type="button" class="data-quality-link" data-review-id="${escapeHtml(it.id)}">
+          <span>
+            <span class="data-quality-link-title">${title}</span>
+            <span class="data-quality-link-reason">${escapeHtml(reasons)}</span>
+          </span>
+          <span class="data-quality-link-action">Review →</span>
+        </button>
+      </li>`;
+    }).join('');
 
-    <div class="debug-block">
-      <h4>Completed-only — alternate formula</h4>
-      <p class="debug-formula">${escapeHtml(summary.currentSavedFormula)}</p>
-      <p class="debug-formula">${escapeHtml(summary.currentPerDayFormula)}</p>
-      <p class="debug-note">Only ${current.completedCount} completed/closed items. Open items add ${fmt(summary.openMarketAll)} market est but are excluded here. Delta vs legacy saved: ${fmt(summary.deltaSaved)} · delta per-day: ${fmt(summary.deltaPerDay)}.</p>
-    </div>
-
-    <div class="debug-block">
-      <h4>Summations</h4>
-      <p class="debug-formula">
-        All items market: ${fmt(legacy.totalMarketAll)}<br>
-        Open items market: ${fmt(summary.openMarketAll)} · open my_cost: ${fmt(summary.openMyCostAll)}<br>
-        Completed market: ${fmt(summary.completedMarket)} · completed my_cost: ${fmt(summary.completedReimbursed)}<br>
-        Completed per-item savings sum: ${fmt(summary.completedSavedSum)}<br>
-        Reimb-flag my_cost (legacy denominator): ${fmt(legacy.totalReimbFlagged)}<br>
-        Estimated savings (open only): ${fmt(current.potentialSavingsTotal)}
-      </p>
-    </div>
-
-    <div class="debug-block">
-      <h4>Per-item lines</h4>
-      <div class="debug-table-wrap">
-        <table class="debug-table">
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Status</th>
-              <th>Reimb?</th>
-              <th>Market</th>
-              <th>my_cost</th>
-              <th>Saved/Est.</th>
-              <th>Bucket</th>
-            </tr>
-          </thead>
-          <tbody>${rowHtml}</tbody>
-        </table>
-      </div>
-    </div>
-  `;
+    listEl.querySelectorAll('[data-review-id]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        focusReviewItem(btn.getAttribute('data-review-id'));
+      });
+    });
+  }
 }
 
 function escapeHtml(s) {
@@ -379,15 +286,21 @@ function escapeHtml(s) {
     .replace(/"/g, '&quot;');
 }
 
-function updateDataQuality() {
-  if (!els.dataQuality) return;
-  const flagged = items.filter(Metrics.needsDataReview);
-  if (!flagged.length) {
-    els.dataQuality.hidden = true;
-    return;
+function focusReviewItem(id) {
+  if (!id) return;
+  els.filterStatus.value = '';
+  els.filterCategory.value = '';
+  els.filterPriority.value = '';
+  renderCards();
+
+  const card = document.querySelector(`.card[data-item-id="${CSS.escape(id)}"]`);
+  if (card) {
+    card.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    card.classList.add('highlight-review');
+    setTimeout(() => card.classList.remove('highlight-review'), 2500);
   }
-  els.dataQuality.hidden = false;
-  els.dataQuality.textContent = `${flagged.length} item${flagged.length === 1 ? '' : 's'} may need cost review (missing fields or estimate in description only).`;
+
+  openModal(id);
 }
 
 // Theme
@@ -409,16 +322,7 @@ function updateThemeButton() {
   if (!themeBtn) return;
   const isDark = (document.documentElement.getAttribute('data-theme') || 'light') === 'dark';
   themeBtn.setAttribute('aria-pressed', String(isDark));
-  themeBtn.textContent = isDark ? 'Light' : 'Dark';
-}
-
-// Filters toggle
-if (els.btnToggleFilters && els.filtersPanel) {
-  els.btnToggleFilters.addEventListener('click', () => {
-    const open = els.filtersPanel.hidden;
-    els.filtersPanel.hidden = !open;
-    els.btnToggleFilters.setAttribute('aria-expanded', String(open));
-  });
+  themeBtn.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
 }
 
 // Image viewer

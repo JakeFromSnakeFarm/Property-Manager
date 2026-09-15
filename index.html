@@ -4,6 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Property Maintenance Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
@@ -14,61 +17,91 @@
                 <p class="app-subtitle">Track repairs, savings, and property value</p>
             </div>
             <div class="header-actions">
-                <a href="./report.html" class="btn btn-secondary btn-sm" target="_blank" rel="noopener">Homeowner Report</a>
-                <button id="btn-new" class="btn btn-primary btn-sm">New Item</button>
-                <button id="theme-toggle" class="btn btn-ghost btn-sm" aria-pressed="false" aria-label="Toggle dark mode">Dark</button>
+                <a href="./report.html" class="btn btn-secondary btn-sm" target="_blank" rel="noopener">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>
+                    Report
+                </a>
+                <button id="btn-new" class="btn btn-primary btn-sm">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                    New Item
+                </button>
+                <button id="theme-toggle" class="btn btn-ghost btn-icon-only" aria-pressed="false" aria-label="Toggle dark mode">
+                    <svg class="icon icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 14.3A9 9 0 1 1 9.7 3a7 7 0 0 0 11.3 11.3z"/></svg>
+                    <svg class="icon icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.9 4.9 1.4 1.4"/><path d="m17.7 17.7 1.4 1.4"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.3 17.7-1.4 1.4"/><path d="m19.1 4.9-1.4 1.4"/></svg>
+                </button>
             </div>
         </div>
 
         <section id="metrics-hero" class="metrics-hero" aria-live="polite">
             <div class="metric-tile metric-tile--cost">
-                <div class="metric-label">Current Cost Per Day</div>
+                <div class="metric-head">
+                    <span class="metric-icon" aria-hidden="true">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/></svg>
+                    </span>
+                    <div class="metric-label">Current Cost Per Day</div>
+                </div>
                 <div id="metric-perday" class="metric-value">$0.00</div>
                 <div id="metric-perday-sub" class="metric-sub">—</div>
             </div>
             <div class="metric-tile metric-tile--savings">
-                <div class="metric-label">Money To Be Saved</div>
+                <div class="metric-head">
+                    <span class="metric-icon" aria-hidden="true">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    </span>
+                    <div class="metric-label">Money To Be Saved</div>
+                </div>
                 <div id="metric-saved" class="metric-value">$0.00</div>
                 <div id="metric-saved-sub" class="metric-sub">Past and future projects</div>
             </div>
-            <div class="metric-tile">
-                <div class="metric-label">Property Value Added</div>
-                <div id="metric-value-added" class="metric-value metric-value--sm">—</div>
-                <div class="metric-sub">Completed work only</div>
-            </div>
             <div class="metric-tile metric-tile--rate" id="metric-rate-wrap" hidden>
-                <div class="metric-label">Your Savings</div>
+                <div class="metric-head">
+                    <span class="metric-icon" aria-hidden="true">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M19 5 5 19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
+                    </span>
+                    <div class="metric-label">Your Savings</div>
+                </div>
                 <div id="metric-rate" class="metric-value metric-value--sm">0%</div>
                 <div class="metric-sub">cheaper than contractors</div>
             </div>
+            <div class="metric-tile metric-tile--hours">
+                <div class="metric-head">
+                    <span class="metric-icon" aria-hidden="true">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    </span>
+                    <div class="metric-label">Estimated Hours Worked</div>
+                </div>
+                <div id="metric-hours" class="metric-value metric-value--sm">0 hrs</div>
+                <div id="metric-hours-sub" class="metric-sub">All tracked labor</div>
+            </div>
+            <div class="metric-tile">
+                <div class="metric-head">
+                    <span class="metric-icon" aria-hidden="true">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
+                    </span>
+                    <div class="metric-label">Property Value Added</div>
+                </div>
+                <div id="metric-value-added" class="metric-value metric-value--sm">—</div>
+                <div class="metric-sub">Completed work only</div>
+            </div>
             <div class="metric-tile metric-tile--completed">
-                <div class="metric-label">Completed Repairs</div>
-                <div id="metric-completed-saved" class="metric-value metric-value--saved">$0.00</div>
-                <div id="metric-completed-sub" class="metric-sub">0 completed · saved vs contractor</div>
-                <div id="metric-open-est" class="metric-sub metric-sub--muted">—</div>
+                <div class="metric-head">
+                    <span class="metric-icon" aria-hidden="true">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+                    </span>
+                    <div class="metric-label">Completed Repairs</div>
+                </div>
+                <div id="metric-completed-count" class="metric-value">0</div>
+                <div id="metric-completed-saved" class="metric-sub metric-sub--saved">$0.00 saved</div>
             </div>
         </section>
 
-        <section id="metrics-secondary" class="metrics-secondary" aria-live="polite">
-            <div class="insight-chip" id="insight-parts" hidden></div>
-            <div class="insight-chip" id="insight-net-daily"></div>
-            <div class="insight-chip" id="insight-contractor"></div>
-            <div class="insight-chip" id="insight-handyman"></div>
-            <div class="insight-chip insight-chip--warn" id="insight-potential" hidden></div>
-        </section>
-
-        <div id="data-quality" class="data-quality" hidden></div>
-
-        <details id="metrics-debug" class="metrics-debug">
-            <summary>Metrics breakdown (debug)</summary>
-            <div id="metrics-debug-body" class="metrics-debug-body"></div>
-        </details>
+        <div id="data-quality" class="data-quality" hidden>
+            <p id="data-quality-summary" class="data-quality-summary"></p>
+            <ul id="data-quality-list" class="data-quality-list"></ul>
+        </div>
 
         <div class="filters-bar">
-            <button type="button" id="btn-toggle-filters" class="btn btn-ghost btn-sm" aria-expanded="false" aria-controls="filters-panel">
-                Filters
-            </button>
-            <div id="filters-panel" class="filters-panel" hidden>
+            <div id="filters-panel" class="filters-panel">
                 <select id="filter-status" aria-label="Filter by status">
                     <option value="">All Statuses</option>
                     <option>new</option>
@@ -111,28 +144,25 @@
         <article class="card" tabindex="0">
             <div class="card-thumb" aria-hidden="true">
                 <img alt="">
+                <div class="card-thumb-empty">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>
+                </div>
             </div>
-            <div class="card-line1">
-                <span class="badge priority"></span>
-                <span class="badge category"></span>
-            </div>
-            <h3 class="title"></h3>
-            <p class="desc"></p>
-            <div class="card-line2">
-                <span class="room"></span>
-                <span class="due"></span>
-            </div>
-            <div class="card-saved-banner" hidden>
-                <div class="card-saved-amount"></div>
-                <div class="card-saved-breakdown"></div>
-            </div>
-            <div class="card-metrics">
-                <span class="card-saved"></span>
-                <span class="card-reimb"></span>
-            </div>
-            <div class="card-line3">
-                <span class="value-chip" hidden></span>
-                <span class="potential-chip" hidden></span>
+            <div class="card-body">
+                <div class="card-line1">
+                    <span class="badge priority"></span>
+                    <span class="badge category"></span>
+                </div>
+                <h3 class="title"></h3>
+                <p class="desc"></p>
+                <div class="card-line2">
+                    <span class="room"></span>
+                    <span class="due"></span>
+                </div>
+                <div class="card-saved-banner">
+                    <div class="card-saved-amount"></div>
+                    <div class="card-saved-breakdown"></div>
+                </div>
             </div>
         </article>
     </template>

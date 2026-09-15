@@ -72,6 +72,13 @@ function renderReport(items, config, generatedAt) {
   document.getElementById('hero-saved-sub').textContent =
     `${fmt(legacy.totalMarketAll)} contractor est − ${fmt(legacy.totalReimbFlagged)} reimbursed · past & future`;
 
+  const hoursEl = document.getElementById('hero-hours');
+  const hoursSub = document.getElementById('hero-hours-sub');
+  if (hoursEl) hoursEl.textContent = Metrics.formatHours(m.totalHoursAll);
+  if (hoursSub) {
+    hoursSub.textContent = `${Metrics.formatHours(m.totalLaborHours)} completed · ${Metrics.formatHours(m.totalHoursAll - m.totalLaborHours)} open`;
+  }
+
   renderSupporting(m, legacy, config);
   renderCarousel('completed-carousel', done, config, false);
   document.getElementById('completed-count').textContent = `(${done.length})`;
@@ -118,28 +125,6 @@ function renderSupporting(m, legacy, config) {
     });
   }
 
-  if (m.partsShare >= 60) {
-    tiles.push({
-      label: 'Parts Share',
-      value: `${Math.round(m.partsShare)}%`,
-      sub: 'of market cost was materials',
-    });
-  }
-
-  tiles.push({
-    label: m.netDailyCost < 0 ? 'Net Daily Gain' : 'Net Daily Cost',
-    value: fmt(Math.abs(m.netDailyCost)),
-    sub: 'after property value added',
-  });
-
-  if (m.handymanDaysEquivalent >= 1) {
-    tiles.push({
-      label: 'Handyman Days',
-      value: `≈ ${Math.round(m.handymanDaysEquivalent)}`,
-      sub: `saved at ${fmt(config.handyman_day_rate)}/day`,
-    });
-  }
-
   if (m.potentialSavingsTotal > 0) {
     tiles.push({
       label: 'Estimated Savings',
@@ -166,17 +151,20 @@ function renderCarousel(containerId, list, config, isPotential) {
     const card = document.createElement('article');
     card.className = 'report-card';
 
+    const thumbWrap = document.createElement('div');
+    thumbWrap.className = 'report-card-thumb';
     const thumb = Array.isArray(it.images) && it.images[0] ? it.images[0] : null;
     if (thumb) {
-      const thumbWrap = document.createElement('div');
-      thumbWrap.className = 'report-card-thumb';
       const img = document.createElement('img');
       img.src = thumb.thumb_url || thumb.url;
       img.alt = it.title || '';
       img.addEventListener('click', () => openViewer(thumb.url));
       thumbWrap.appendChild(img);
-      card.appendChild(thumbWrap);
+    } else {
+      thumbWrap.classList.add('is-empty');
+      thumbWrap.innerHTML = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>';
     }
+    card.appendChild(thumbWrap);
 
     const body = document.createElement('div');
     body.className = 'report-card-body';
@@ -192,11 +180,16 @@ function renderCarousel(containerId, list, config, isPotential) {
     meta.textContent = parts.join(' · ');
     body.appendChild(meta);
 
+    const res = document.createElement('p');
+    res.className = 'report-card-resolution';
+    res.textContent = it.resolution || it.description || ' ';
+    body.appendChild(res);
+
     if (isPotential && im.potential > 0) {
       const saved = document.createElement('div');
-      saved.className = 'report-card-saved';
-      saved.textContent = `Est. savings ${fmt(im.potential)}`;
-      saved.style.color = 'var(--warn)';
+      saved.className = 'report-card-saved-banner is-est';
+      saved.innerHTML = `<div class="report-card-saved-amount">Est. ${fmt(im.potential)}</div>
+        <div class="report-card-saved-breakdown">${fmt(im.market)} contractor − ${fmt(im.reimbursed)} billed</div>`;
       body.appendChild(saved);
     } else if (!isPotential && im.market > 0) {
       const banner = document.createElement('div');
@@ -210,27 +203,11 @@ function renderCarousel(containerId, list, config, isPotential) {
       banner.appendChild(amount);
       banner.appendChild(breakdown);
       body.appendChild(banner);
-    }
-
-    if (it.resolution) {
-      const res = document.createElement('p');
-      res.className = 'report-card-resolution';
-      res.textContent = it.resolution;
-      body.appendChild(res);
-    }
-
-    if (im.valLow > 0 || im.valHigh > 0) {
-      const val = document.createElement('div');
-      val.className = 'report-card-value';
-      val.textContent = `+${Metrics.formatValueRange(im.valLow, im.valHigh)} property value`;
-      body.appendChild(val);
-    }
-
-    if (it.value_added_rationale) {
-      const rat = document.createElement('p');
-      rat.className = 'report-card-resolution';
-      rat.textContent = it.value_added_rationale;
-      body.appendChild(rat);
+    } else {
+      const banner = document.createElement('div');
+      banner.className = 'report-card-saved-banner is-muted';
+      banner.innerHTML = `<div class="report-card-saved-amount">${im.done ? 'No savings recorded' : 'Estimate pending'}</div>`;
+      body.appendChild(banner);
     }
 
     card.appendChild(body);
@@ -257,7 +234,7 @@ function updateThemeButton() {
   if (!themeBtn) return;
   const isDark = (document.documentElement.getAttribute('data-theme') || 'light') === 'dark';
   themeBtn.setAttribute('aria-pressed', String(isDark));
-  themeBtn.textContent = isDark ? 'Light' : 'Dark';
+  themeBtn.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
 }
 
 // Print

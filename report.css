@@ -49,12 +49,12 @@
 
 .report-hero {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 12px;
   margin-bottom: 16px;
 }
 
-@media (max-width: 520px) {
+@media (max-width: 720px) {
   .report-hero { grid-template-columns: 1fr; }
 }
 
@@ -66,13 +66,18 @@
 }
 
 .hero-metric--savings {
-  background: color-mix(in srgb, var(--success-soft) 60%, var(--panel));
-  border-color: color-mix(in srgb, var(--success) 35%, var(--muted));
+  background: color-mix(in srgb, var(--success-soft) 70%, var(--panel));
+  border-color: color-mix(in srgb, var(--success) 22%, var(--muted));
 }
 
 .hero-metric--cost {
-  background: color-mix(in srgb, var(--cost-soft) 60%, var(--panel));
-  border-color: color-mix(in srgb, var(--cost) 35%, var(--muted));
+  background: color-mix(in srgb, var(--cost-soft) 70%, var(--panel));
+  border-color: color-mix(in srgb, var(--cost) 22%, var(--muted));
+}
+
+.hero-metric--hours {
+  background: color-mix(in srgb, var(--hours-soft) 70%, var(--panel));
+  border-color: color-mix(in srgb, var(--hours) 22%, var(--muted));
 }
 
 .hero-label {
@@ -155,6 +160,7 @@
 
 .report-carousel {
   display: flex;
+  align-items: stretch;
   gap: 12px;
   overflow-x: auto;
   padding: 4px 2px 10px;
@@ -167,21 +173,28 @@
 .report-carousel::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 999px; }
 
 .report-card {
-  flex: 0 0 min(300px, 85vw);
+  flex: 0 0 280px;
+  width: 280px;
+  height: 360px;
   scroll-snap-align: start;
   background: var(--panel);
   border: 1px solid var(--muted);
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow);
-  display: grid;
-  gap: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .report-card-thumb {
-  aspect-ratio: 16/10;
-  background: var(--bg);
+  flex: 0 0 128px;
+  height: 128px;
+  background: color-mix(in srgb, var(--muted) 35%, var(--bg));
   border-bottom: 1px solid var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: color-mix(in srgb, var(--subtle) 55%, transparent);
 }
 
 .report-card-thumb img {
@@ -192,13 +205,27 @@
   cursor: zoom-in;
 }
 
-.report-card-body { padding: 12px; display: grid; gap: 8px; }
+.report-card-thumb .icon { width: 28px; height: 28px; }
+
+.report-card-body {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-height: 0;
+}
 
 .report-card-title {
   margin: 0;
   font-size: 15px;
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.25;
+  height: 2.5em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .report-card-meta {
@@ -207,47 +234,60 @@
   gap: 6px;
   font-size: 10px;
   color: var(--subtle);
-}
-
-.report-card-saved {
-  font-size: 16px;
-  font-weight: 800;
-  color: var(--success);
+  min-height: 14px;
 }
 
 .report-card-saved-banner {
-  padding: 10px 12px;
+  margin-top: auto;
+  flex: 0 0 52px;
+  height: 52px;
+  padding: 8px 10px;
   border-radius: 8px;
   background: var(--success-soft);
-  border: 1px solid color-mix(in srgb, var(--success) 45%, var(--muted));
+  border: 1px solid color-mix(in srgb, var(--success) 28%, var(--muted));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.report-card-saved-banner.is-est {
+  background: color-mix(in srgb, var(--warn) 10%, var(--panel));
+  border-color: color-mix(in srgb, var(--warn) 30%, var(--muted));
+}
+
+.report-card-saved-banner.is-est .report-card-saved-amount { color: var(--warn); }
+.report-card-saved-banner.is-muted {
+  background: var(--bg);
+  border-color: var(--muted);
+}
+.report-card-saved-banner.is-muted .report-card-saved-amount {
+  color: var(--subtle);
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .report-card-saved-amount {
-  font-size: 18px;
-  font-weight: 800;
+  font-size: 16px;
+  font-weight: 700;
   color: var(--success);
   letter-spacing: -0.02em;
   line-height: 1.2;
 }
 
 .report-card-saved-breakdown {
-  margin-top: 4px;
-  font-size: 11px;
+  margin-top: 3px;
+  font-size: 10px;
   font-weight: 600;
   color: color-mix(in srgb, var(--success) 70%, var(--subtle));
-}
-
-.report-card-reimb {
-  font-size: 11px;
-  color: var(--subtle);
 }
 
 .report-card-resolution {
   font-size: 12px;
   color: var(--subtle);
-  line-height: 1.45;
+  line-height: 1.4;
+  height: 3.9em;
   display: -webkit-box;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

@@ -4,6 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Property Maintenance Value Report</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./styles.css">
     <link rel="stylesheet" href="./report.css">
 </head>
@@ -15,8 +18,14 @@
                 <p id="report-subtitle" class="report-subtitle">Live maintenance impact summary</p>
             </div>
             <div class="report-actions">
-                <button id="btn-print" class="btn btn-primary btn-sm" type="button">Print / Save PDF</button>
-                <button id="theme-toggle" class="btn btn-ghost btn-sm" aria-pressed="false" aria-label="Toggle dark mode">Dark</button>
+                <button id="btn-print" class="btn btn-primary btn-sm" type="button">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+                    Print / Save PDF
+                </button>
+                <button id="theme-toggle" class="btn btn-ghost btn-icon-only" aria-pressed="false" aria-label="Toggle dark mode">
+                    <svg class="icon icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 14.3A9 9 0 1 1 9.7 3a7 7 0 0 0 11.3 11.3z"/></svg>
+                    <svg class="icon icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.9 4.9 1.4 1.4"/><path d="m17.7 17.7 1.4 1.4"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.3 17.7-1.4 1.4"/><path d="m19.1 4.9-1.4 1.4"/></svg>
+                </button>
             </div>
         </div>
         <p id="report-updated" class="report-updated">Loading…</p>
@@ -38,6 +47,11 @@
                 <div class="hero-label">Current Cost Per Day</div>
                 <div id="hero-perday" class="hero-value">$0.00</div>
                 <div id="hero-perday-sub" class="hero-sub">Completed reimbursements only</div>
+            </div>
+            <div class="hero-metric hero-metric--hours">
+                <div class="hero-label">Estimated Hours Worked</div>
+                <div id="hero-hours" class="hero-value">0 hrs</div>
+                <div id="hero-hours-sub" class="hero-sub">All tracked labor</div>
             </div>
         </section>
 

@@ -55,6 +55,9 @@ assert(m.contractorCostAvoided === 250, 'contractor cost avoided');
 assert(m.potentialSavingsTotal === 500, 'potential separate');
 assert(m.valueAddedLowTotal === 500, 'value added low');
 assert(m.partsShare === 20, 'parts share 50/250');
+assert(m.totalHoursAll === 6, 'all hours 2+4');
+assert(m.totalLaborHours === 2, 'completed hours only');
+assert(Metrics.formatHours(6) === '6 hrs', 'format hours');
 
 const zeroCost = {
   status: 'completed',
