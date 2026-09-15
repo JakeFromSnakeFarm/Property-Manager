@@ -102,6 +102,11 @@ function renderCards() {
     row.className = 'group-row';
     const itemsInGroup = byStatus.get(status);
     itemsInGroup.sort((a, b) => {
+      if (DONE_STATUS_SET.has(status)) {
+        const savingsDiff = Metrics.itemSavings(b) - Metrics.itemSavings(a);
+        if (savingsDiff !== 0) return savingsDiff;
+        return new Date(b.updated_at || b.created_at).getTime() - new Date(a.updated_at || a.created_at).getTime();
+      }
       const pa = PRIORITY_ORDER[a.priority] ?? 9;
       const pb = PRIORITY_ORDER[b.priority] ?? 9;
       if (pa !== pb) return pa - pb;
