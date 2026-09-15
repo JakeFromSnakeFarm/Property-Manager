@@ -43,7 +43,13 @@
         "labor_cost_estimate": 40,
         "parts_cost": 40,
         "asking_for_reimbursement": true,
-        "my_cost": 200
+        "my_cost": 200,
+        "value_added_low": 0,
+        "value_added_high": 0,
+        "value_added_confidence": "",
+        "value_added_rationale": "",
+        "value_added_sources": "",
+        "include_in_value_total": false
     },
     {
         "id": "ad5341fa-23e2-408f-8ec7-e50c3fd24e30",
@@ -77,7 +83,13 @@
         "labor_cost_estimate": 20,
         "parts_cost": 10,
         "asking_for_reimbursement": false,
-        "my_cost": 0
+        "my_cost": 0,
+        "value_added_low": 0,
+        "value_added_high": 0,
+        "value_added_confidence": "",
+        "value_added_rationale": "",
+        "value_added_sources": "",
+        "include_in_value_total": false
     },
     {
         "id": "0562d9b0-ce82-4bf8-8f63-415019779eb1",
@@ -111,7 +123,13 @@
         "labor_cost_estimate": 0,
         "parts_cost": 0,
         "asking_for_reimbursement": false,
-        "my_cost": 250
+        "my_cost": 250,
+        "value_added_low": 0,
+        "value_added_high": 0,
+        "value_added_confidence": "",
+        "value_added_rationale": "",
+        "value_added_sources": "",
+        "include_in_value_total": false
     },
     {
         "id": "f612efea-b27a-4199-be3b-df2dac570805",
@@ -157,7 +175,13 @@
         "labor_cost_estimate": 80,
         "parts_cost": 40,
         "asking_for_reimbursement": false,
-        "my_cost": 200
+        "my_cost": 200,
+        "value_added_low": 0,
+        "value_added_high": 0,
+        "value_added_confidence": "",
+        "value_added_rationale": "",
+        "value_added_sources": "",
+        "include_in_value_total": false
     },
     {
         "id": "32d0b8a4-dcc0-49e9-825a-4433587d68ab",
@@ -203,7 +227,13 @@
                 }
             }
         ],
-        "my_cost": 0
+        "my_cost": 0,
+        "value_added_low": 0,
+        "value_added_high": 0,
+        "value_added_confidence": "",
+        "value_added_rationale": "",
+        "value_added_sources": "",
+        "include_in_value_total": false
     },
     {
         "id": "98804c48-512d-484e-85da-6d1ea88c74f1",
@@ -249,7 +279,13 @@
                     "original_filename": "1000043956.jpg"
                 }
             }
-        ]
+        ],
+        "value_added_low": 0,
+        "value_added_high": 0,
+        "value_added_confidence": "",
+        "value_added_rationale": "",
+        "value_added_sources": "",
+        "include_in_value_total": false
     },
     {
         "id": "6983d1a7-bd16-4d46-b61c-8329b951a73b",
@@ -283,7 +319,13 @@
                     "original_filename": "1000043959.jpg"
                 }
             }
-        ]
+        ],
+        "value_added_low": 0,
+        "value_added_high": 0,
+        "value_added_confidence": "",
+        "value_added_rationale": "",
+        "value_added_sources": "",
+        "include_in_value_total": false
     },
     {
         "id": "af283c76-cd4d-4006-af42-7079997abb30",
@@ -317,7 +359,13 @@
                     "original_filename": "1000043958.jpg"
                 }
             }
-        ]
+        ],
+        "value_added_low": 0,
+        "value_added_high": 0,
+        "value_added_confidence": "",
+        "value_added_rationale": "",
+        "value_added_sources": "",
+        "include_in_value_total": false
     },
     {
         "id": "977378c4-024b-496a-8854-b3c166a83a95",
@@ -351,7 +399,13 @@
                     "original_filename": "1000043960.jpg"
                 }
             }
-        ]
+        ],
+        "value_added_low": 0,
+        "value_added_high": 0,
+        "value_added_confidence": "",
+        "value_added_rationale": "",
+        "value_added_sources": "",
+        "include_in_value_total": false
     },
     {
         "id": "76e377d1-9ec5-4ba2-8335-82bcab914b20",
@@ -385,7 +439,13 @@
                     "original_filename": "1000044006.jpg"
                 }
             }
-        ]
+        ],
+        "value_added_low": 0,
+        "value_added_high": 0,
+        "value_added_confidence": "",
+        "value_added_rationale": "",
+        "value_added_sources": "",
+        "include_in_value_total": false
     },
     {
         "id": "49c7290d-f9a6-458b-a84e-76de902fb949",
@@ -419,7 +479,13 @@
                     "original_filename": "1000045120.jpg"
                 }
             }
-        ]
+        ],
+        "value_added_low": 0,
+        "value_added_high": 0,
+        "value_added_confidence": "",
+        "value_added_rationale": "",
+        "value_added_sources": "",
+        "include_in_value_total": false
     },
     {
         "id": "91c07ec0-272e-4a16-b145-b5777f671fa4",
@@ -453,7 +519,13 @@
                     "original_filename": "chrome_3f7kwqyTnB.png"
                 }
             }
-        ]
+        ],
+        "value_added_low": 0,
+        "value_added_high": 0,
+        "value_added_confidence": "",
+        "value_added_rationale": "",
+        "value_added_sources": "",
+        "include_in_value_total": false
     },
     {
         "id": "67238a10-554e-4187-90f2-368431fe664d",
@@ -487,7 +559,13 @@
                     "original_filename": "images.jfif"
                 }
             }
-        ]
+        ],
+        "value_added_low": 0,
+        "value_added_high": 0,
+        "value_added_confidence": "",
+        "value_added_rationale": "",
+        "value_added_sources": "",
+        "include_in_value_total": false
     },
     {
         "id": "1c8f87f1-3f80-4e2b-9817-edf4b73c05b4",
@@ -521,7 +599,13 @@
                     "original_filename": "images.jfif"
                 }
             }
-        ]
+        ],
+        "value_added_low": 0,
+        "value_added_high": 0,
+        "value_added_confidence": "",
+        "value_added_rationale": "",
+        "value_added_sources": "",
+        "include_in_value_total": false
     },
     {
         "id": "a3287dc1-a4f1-487b-a04f-33e4aab2b57c",
@@ -542,7 +626,13 @@
         "my_cost": 390,
         "created_at": "2026-08-31T20:12:35+00:00",
         "updated_at": "2026-08-31T20:13:49+00:00",
-        "images": []
+        "images": [],
+        "value_added_low": 0,
+        "value_added_high": 0,
+        "value_added_confidence": "",
+        "value_added_rationale": "",
+        "value_added_sources": "",
+        "include_in_value_total": false
     },
     {
         "id": "dc054760-5acf-465f-87e7-ab5dedcd395e",
@@ -563,7 +653,13 @@
         "my_cost": 0,
         "created_at": "2026-08-31T20:15:27+00:00",
         "updated_at": "2026-09-02T13:45:44+00:00",
-        "images": []
+        "images": [],
+        "value_added_low": 0,
+        "value_added_high": 0,
+        "value_added_confidence": "",
+        "value_added_rationale": "",
+        "value_added_sources": "",
+        "include_in_value_total": false
     },
     {
         "id": "71a8f138-7af2-4494-aa93-dd90a1aae863",
@@ -584,7 +680,13 @@
         "my_cost": 45,
         "created_at": "2026-08-31T20:17:17+00:00",
         "updated_at": "2026-08-31T20:17:38+00:00",
-        "images": []
+        "images": [],
+        "value_added_low": 0,
+        "value_added_high": 0,
+        "value_added_confidence": "",
+        "value_added_rationale": "",
+        "value_added_sources": "",
+        "include_in_value_total": false
     },
     {
         "id": "a2496d92-6ca6-42c4-a013-d94a826b57fe",
@@ -605,7 +707,13 @@
         "my_cost": 370,
         "created_at": "2026-08-31T20:17:55+00:00",
         "updated_at": "2026-09-10T21:20:06+00:00",
-        "images": []
+        "images": [],
+        "value_added_low": 0,
+        "value_added_high": 0,
+        "value_added_confidence": "",
+        "value_added_rationale": "",
+        "value_added_sources": "",
+        "include_in_value_total": false
     },
     {
         "id": "731bd369-73d4-4fc9-8a1b-1ac6b9e51932",
@@ -626,7 +734,13 @@
         "my_cost": 745,
         "created_at": "2026-08-31T20:23:23+00:00",
         "updated_at": "2026-09-10T21:25:09+00:00",
-        "images": []
+        "images": [],
+        "value_added_low": 0,
+        "value_added_high": 0,
+        "value_added_confidence": "",
+        "value_added_rationale": "",
+        "value_added_sources": "",
+        "include_in_value_total": false
     },
     {
         "id": "87d0d440-3f9a-421b-af7e-e1ec5d52fb63",
@@ -647,7 +761,13 @@
         "my_cost": 0,
         "created_at": "2026-08-31T20:24:33+00:00",
         "updated_at": "2026-08-31T20:24:55+00:00",
-        "images": []
+        "images": [],
+        "value_added_low": 0,
+        "value_added_high": 0,
+        "value_added_confidence": "",
+        "value_added_rationale": "",
+        "value_added_sources": "",
+        "include_in_value_total": false
     },
     {
         "id": "a69cdf4b-5284-488e-bf35-68a6409c59a7",
@@ -668,7 +788,13 @@
         "my_cost": 0,
         "created_at": "2026-08-31T20:25:50+00:00",
         "updated_at": "2026-08-31T20:26:04+00:00",
-        "images": []
+        "images": [],
+        "value_added_low": 0,
+        "value_added_high": 0,
+        "value_added_confidence": "",
+        "value_added_rationale": "",
+        "value_added_sources": "",
+        "include_in_value_total": false
     },
     {
         "id": "9c8acc85-a5d7-4b8a-a42d-3beb5e703a7c",
@@ -689,7 +815,13 @@
         "my_cost": 0,
         "created_at": "2026-08-31T20:26:13+00:00",
         "updated_at": "2026-08-31T20:27:58+00:00",
-        "images": []
+        "images": [],
+        "value_added_low": 0,
+        "value_added_high": 0,
+        "value_added_confidence": "",
+        "value_added_rationale": "",
+        "value_added_sources": "",
+        "include_in_value_total": false
     },
     {
         "id": "dc566638-5686-4b55-be8a-3a512b5d8411",
@@ -710,7 +842,13 @@
         "my_cost": 0,
         "created_at": "2026-08-31T20:28:41+00:00",
         "updated_at": "2026-09-10T21:18:49+00:00",
-        "images": []
+        "images": [],
+        "value_added_low": 0,
+        "value_added_high": 0,
+        "value_added_confidence": "",
+        "value_added_rationale": "",
+        "value_added_sources": "",
+        "include_in_value_total": false
     },
     {
         "id": "a28f69cb-6f2f-448d-9ff6-3119220ea953",
@@ -731,7 +869,13 @@
         "my_cost": 0,
         "created_at": "2026-08-31T20:30:13+00:00",
         "updated_at": "2026-09-10T21:18:47+00:00",
-        "images": []
+        "images": [],
+        "value_added_low": 0,
+        "value_added_high": 0,
+        "value_added_confidence": "",
+        "value_added_rationale": "",
+        "value_added_sources": "",
+        "include_in_value_total": false
     },
     {
         "id": "dc48797c-146e-4b52-9fd7-7dfc477d640c",
@@ -752,7 +896,13 @@
         "my_cost": 0,
         "created_at": "2026-08-31T20:30:43+00:00",
         "updated_at": "2026-08-31T20:31:00+00:00",
-        "images": []
+        "images": [],
+        "value_added_low": 0,
+        "value_added_high": 0,
+        "value_added_confidence": "",
+        "value_added_rationale": "",
+        "value_added_sources": "",
+        "include_in_value_total": false
     },
     {
         "id": "de341804-d36c-4888-a33e-78eb1048fb9f",
@@ -773,7 +923,13 @@
         "my_cost": 0,
         "created_at": "2026-08-31T20:31:27+00:00",
         "updated_at": "2026-08-31T20:31:28+00:00",
-        "images": []
+        "images": [],
+        "value_added_low": 0,
+        "value_added_high": 0,
+        "value_added_confidence": "",
+        "value_added_rationale": "",
+        "value_added_sources": "",
+        "include_in_value_total": false
     },
     {
         "id": "4684e24c-7978-4758-a5ac-2b278ec0d62d",
@@ -794,6 +950,12 @@
         "my_cost": 0,
         "created_at": "2026-08-31T21:07:01+00:00",
         "updated_at": "2026-09-10T21:17:45+00:00",
-        "images": []
+        "images": [],
+        "value_added_low": 0,
+        "value_added_high": 0,
+        "value_added_confidence": "",
+        "value_added_rationale": "",
+        "value_added_sources": "",
+        "include_in_value_total": false
     }
 ]

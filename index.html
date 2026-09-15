@@ -3,18 +3,66 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Property Manager - Repairs & Issues</title>
+    <title>Property Maintenance Dashboard</title>
     <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
     <header class="app-header">
         <div class="header-main">
-            <h1 class="app-title">Repairs & Issues</h1>
-            <button id="btn-new" class="btn btn-primary">New Item</button>
-            <button id="theme-toggle" class="btn btn-secondary" style="margin-left:auto" aria-pressed="false" aria-label="Toggle dark mode">Dark mode</button>
+            <div class="header-brand">
+                <h1 class="app-title">Maintenance Dashboard</h1>
+                <p class="app-subtitle">Track repairs, savings, and property value</p>
+            </div>
+            <div class="header-actions">
+                <a href="./report.html" class="btn btn-secondary btn-sm" target="_blank" rel="noopener">Homeowner Report</a>
+                <button id="btn-new" class="btn btn-primary btn-sm">New Item</button>
+                <button id="theme-toggle" class="btn btn-ghost btn-sm" aria-pressed="false" aria-label="Toggle dark mode">Dark</button>
+            </div>
         </div>
-        <div class="header-sub">
-            <div class="filters">
+
+        <section id="metrics-hero" class="metrics-hero" aria-live="polite">
+            <div class="metric-tile metric-tile--cost">
+                <div class="metric-label">Cost Per Day</div>
+                <div id="metric-perday" class="metric-value">$0.00</div>
+                <div id="metric-perday-sub" class="metric-sub">—</div>
+            </div>
+            <div class="metric-tile metric-tile--savings">
+                <div class="metric-label">Total Money Saved</div>
+                <div id="metric-saved" class="metric-value">$0.00</div>
+                <div id="metric-saved-sub" class="metric-sub">—</div>
+            </div>
+            <div class="metric-tile">
+                <div class="metric-label">Property Value Added</div>
+                <div id="metric-value-added" class="metric-value metric-value--sm">—</div>
+                <div class="metric-sub">Completed work only</div>
+            </div>
+            <div class="metric-tile" id="metric-rate-wrap" hidden>
+                <div class="metric-label">Savings Rate</div>
+                <div id="metric-rate" class="metric-value metric-value--sm">0%</div>
+                <div class="metric-sub">vs contractor pricing</div>
+            </div>
+            <div class="metric-tile">
+                <div class="metric-label">Completed Repairs</div>
+                <div id="metric-completed" class="metric-value metric-value--sm">0</div>
+                <div id="metric-open-sub" class="metric-sub">—</div>
+            </div>
+        </section>
+
+        <section id="metrics-secondary" class="metrics-secondary" aria-live="polite">
+            <div class="insight-chip" id="insight-parts" hidden></div>
+            <div class="insight-chip" id="insight-net-daily"></div>
+            <div class="insight-chip" id="insight-contractor"></div>
+            <div class="insight-chip" id="insight-handyman"></div>
+            <div class="insight-chip insight-chip--warn" id="insight-potential" hidden></div>
+        </section>
+
+        <div id="data-quality" class="data-quality" hidden></div>
+
+        <div class="filters-bar">
+            <button type="button" id="btn-toggle-filters" class="btn btn-ghost btn-sm" aria-expanded="false" aria-controls="filters-panel">
+                Filters
+            </button>
+            <div id="filters-panel" class="filters-panel" hidden>
                 <select id="filter-status" aria-label="Filter by status">
                     <option value="">All Statuses</option>
                     <option>new</option>
@@ -46,16 +94,6 @@
                     <option>low</option>
                 </select>
             </div>
-            <div id="metrics" class="metrics" aria-live="polite">
-                <div class="metric-box">
-                    <div class="metric-title">Money Saved</div>
-                    <div id="metric-saved" class="metric-value">$0.00</div>
-                </div>
-                <div class="metric-box">
-                    <div class="metric-title">Reimbursed Cost Per Day</div>
-                    <div id="metric-perday" class="metric-value">$0.00</div>
-                </div>
-            </div>
         </div>
     </header>
 
@@ -70,7 +108,6 @@
             </div>
             <div class="card-line1">
                 <span class="badge priority"></span>
-                <span class="badge status"></span>
                 <span class="badge category"></span>
             </div>
             <h3 class="title"></h3>
@@ -79,9 +116,13 @@
                 <span class="room"></span>
                 <span class="due"></span>
             </div>
+            <div class="card-metrics">
+                <span class="card-saved"></span>
+                <span class="card-reimb"></span>
+            </div>
             <div class="card-line3">
-                <span class="est"></span>
-                <span class="reimb badge" style="display:none">Reimb</span>
+                <span class="value-chip" hidden></span>
+                <span class="potential-chip" hidden></span>
             </div>
         </article>
     </template>
@@ -96,73 +137,77 @@
             </header>
             <form id="item-form">
                 <input type="hidden" id="item-id">
-                <div class="form-grid">
-                    <label>Title
-                        <input id="title" type="text" required maxlength="120">
-                    </label>
-                    <label class="span-2">Description
-                        <textarea id="description" rows="5" placeholder="Details..."></textarea>
-                    </label>
-                    <label>Priority
-                        <select id="priority" required>
-                            <option>normal</option>
-                            <option>low</option>
-                            <option>high</option>
-                            <option>urgent</option>
-                        </select>
-                    </label>
-                    <label>Status
-                        <select id="status" required>
-                            <option>new</option>
-                            <option>triaged</option>
-                            <option>scheduled</option>
-                            <option>in_progress</option>
-                            <option>awaiting_parts</option>
-                            <option>on_hold</option>
-                            <option>completed</option>
-                            <option>closed</option>
-                            <option>won’t_fix</option>
-                        </select>
-                    </label>
-                    <label>Category
-                        <select id="category" required>
-                            <option>misc</option>
-                            <option>plumbing</option>
-                            <option>electrical</option>
-                            <option>HVAC</option>
-                            <option>appliance</option>
-                            <option>structural</option>
-                            <option>pest</option>
-                            <option>paint</option>
-                        </select>
-                    </label>
-                    <label>Room / Location
-                        <input id="room" type="text" placeholder="kitchen, bath, roof, etc.">
-                    </label>
-                    <label>Reported By
-                        <input id="reported_by" type="text" placeholder="name/contact">
-                    </label>
-                    <label>Next Action
-                        <input id="next_action" type="text" placeholder="e.g., Schedule access">
-                    </label>
-                    <label>Due By (optional)
-                        <input id="due_by" type="date">
-                    </label>
-                    <div id="resolution-wrap" class="span-2" style="display:none">
-                        <label>Resolution
-                            <textarea id="resolution" rows="4" placeholder="What was done to resolve this?"></textarea>
-                        </label>
-                    </div>
-                    <div class="meta span-2">
-                        <div><strong>Created:</strong> <span id="created_at"></span></div>
-                        <div><strong>Updated:</strong> <span id="updated_at"></span></div>
-                    </div>
-                </div>
 
-                <section class="images">
-                    <div class="images-header">
-                        <h3>Images</h3>
-                        <label class="btn btn-secondary">
+                <section class="form-section">
+                    <h3 class="section-title">Details</h3>
+                    <div class="form-grid">
+                        <label class="span-2">Title
+                            <input id="title" type="text" required maxlength="120">
+                        </label>
+                        <label class="span-2">Description
+                            <textarea id="description" rows="4" placeholder="Details..."></textarea>
+                        </label>
+                        <label>Priority
+                            <select id="priority" required>
+                                <option>normal</option>
+                                <option>low</option>
+                                <option>high</option>
+                                <option>urgent</option>
+                            </select>
+                        </label>
+                        <label>Status
+                            <select id="status" required>
+                                <option>new</option>
+                                <option>triaged</option>
+                                <option>scheduled</option>
+                                <option>in_progress</option>
+                                <option>awaiting_parts</option>
+                                <option>on_hold</option>
+                                <option>completed</option>
+                                <option>closed</option>
+                                <option>won’t_fix</option>
+                            </select>
+                        </label>
+                        <label>Category
+                            <select id="category" required>
+                                <option>misc</option>
+                                <option>plumbing</option>
+                                <option>electrical</option>
+                                <option>HVAC</option>
+                                <option>appliance</option>
+                                <option>structural</option>
+                                <option>pest</option>
+                                <option>paint</option>
+                            </select>
+                        </label>
+                        <label>Room / Location
+                            <input id="room" type="text" placeholder="kitchen, bath, roof, etc.">
+                        </label>
+                        <label>Reported By
+                            <input id="reported_by" type="text" placeholder="name/contact">
+                        </label>
+                        <label>Next Action
+                            <input id="next_action" type="text" placeholder="e.g., Schedule access">
+                        </label>
+                        <label>Due By (optional)
+                            <input id="due_by" type="date">
+                        </label>
+                        <div id="resolution-wrap" class="span-2" hidden>
+                            <label>Resolution
+                                <textarea id="resolution" rows="3" placeholder="What was done to resolve this?"></textarea>
+                            </label>
+                        </div>
+                        <div class="meta span-2">
+                            <div><strong>Created:</strong> <span id="created_at"></span></div>
+                            <div><strong>Updated:</strong> <span id="updated_at"></span></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="form-section images">
+                    <div class="section-header">
+                        <h3 class="section-title">Evidence</h3>
+                        <label class="btn btn-secondary btn-sm">
                             Upload Images
                             <input id="image-input" type="file" accept="image/*" multiple hidden>
                         </label>
@@ -170,8 +215,9 @@
                     <div id="image-grid" class="image-grid"></div>
                 </section>
 
-                <section class="costs">
-                    <h3>Costs</h3>
+                <section class="form-section costs">
+                    <h3 class="section-title">Cost Comparison</h3>
+                    <p class="section-hint">Contractor market estimate vs amount reimbursed to you.</p>
                     <div class="form-grid">
                         <label>Labor Time (hours)
                             <input id="labor_time" type="number" min="0" step="0.1" inputmode="decimal" placeholder="0">
@@ -182,22 +228,53 @@
                         <label>Parts Cost
                             <input id="parts_cost" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0">
                         </label>
-                        <label>Estimated Price
+                        <label>Contractor Market Estimate
                             <input id="estimated_price" type="text" readonly>
                         </label>
-                        <label>
-                            <input id="asking_for_reimbursement" type="checkbox"> Asking for reimbursement
+                        <label class="span-2 checkbox-label">
+                            <input id="asking_for_reimbursement" type="checkbox"> Requesting reimbursement from homeowner
                         </label>
-                        <label id="my_cost_wrap" style="display:none">My Cost
+                        <label id="my_cost_wrap" class="span-2" hidden>Amount Reimbursed
                             <input id="my_cost" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0">
+                        </label>
+                        <div id="form-savings-preview" class="span-2 savings-preview" hidden></div>
+                    </div>
+                </section>
+
+                <section class="form-section value-section">
+                    <h3 class="section-title">Property Value Impact</h3>
+                    <p class="section-hint">Manual estimate of how this repair improves property value.</p>
+                    <div class="form-grid">
+                        <label>Value Added (low)
+                            <input id="value_added_low" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0">
+                        </label>
+                        <label>Value Added (high)
+                            <input id="value_added_high" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0">
+                        </label>
+                        <label>Confidence
+                            <select id="value_added_confidence">
+                                <option value="">Not set</option>
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                            </select>
+                        </label>
+                        <label class="checkbox-label">
+                            <input id="include_in_value_total" type="checkbox"> Include in property value total
+                        </label>
+                        <label class="span-2">Rationale
+                            <textarea id="value_added_rationale" rows="3" placeholder="Why does this add value?"></textarea>
+                        </label>
+                        <label class="span-2">Sources (URLs or notes)
+                            <textarea id="value_added_sources" rows="2" placeholder="https://... or comparable sales notes"></textarea>
                         </label>
                     </div>
                 </section>
 
-                <footer class="modal-actions">
-                    <button type="button" id="btn-delete" class="btn btn-danger">Delete</button>
+                <footer class="modal-actions modal-actions--sticky">
+                    <button type="button" id="btn-delete" class="btn btn-danger btn-sm">Delete</button>
                     <div class="spacer"></div>
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Save &amp; Close</button>
                 </footer>
             </form>
         </div>
@@ -211,8 +288,7 @@
         </div>
     </div>
 
+    <script src="./metrics.js"></script>
     <script src="./app.js" defer></script>
 </body>
 </html>
-
-

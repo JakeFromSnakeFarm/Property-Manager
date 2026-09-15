@@ -1,0 +1,7 @@
+{
+  "report_title": "Property Maintenance Value Report",
+  "property_label": "Rental Property",
+  "tracking_start": "2025-10-01",
+  "handyman_day_rate": 150,
+  "handyman_hourly_rate": 75
+}

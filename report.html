@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Property Maintenance Value Report</title>
+    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./report.css">
+</head>
+<body class="report-page">
+    <header class="report-header no-print">
+        <div class="report-header-top">
+            <div>
+                <h1 id="report-title" class="report-title">Property Maintenance Value Report</h1>
+                <p id="report-subtitle" class="report-subtitle">Live maintenance impact summary</p>
+            </div>
+            <div class="report-actions">
+                <button id="btn-print" class="btn btn-primary btn-sm" type="button">Print / Save PDF</button>
+                <button id="theme-toggle" class="btn btn-ghost btn-sm" aria-pressed="false" aria-label="Toggle dark mode">Dark</button>
+            </div>
+        </div>
+        <p id="report-updated" class="report-updated">Loading…</p>
+    </header>
+
+    <header class="report-header print-only">
+        <h1 id="report-title-print" class="report-title">Property Maintenance Value Report</h1>
+        <p id="report-period-print" class="report-subtitle"></p>
+    </header>
+
+    <main class="report-main">
+        <section class="report-hero" aria-live="polite">
+            <div class="hero-metric hero-metric--savings">
+                <div class="hero-label">Total Money Saved</div>
+                <div id="hero-saved" class="hero-value">$0.00</div>
+                <div id="hero-saved-sub" class="hero-sub">vs contractor market pricing</div>
+            </div>
+            <div class="hero-metric hero-metric--cost">
+                <div class="hero-label">Your Cost Per Day</div>
+                <div id="hero-perday" class="hero-value">$0.00</div>
+                <div id="hero-perday-sub" class="hero-sub">amount reimbursed over tracking period</div>
+            </div>
+        </section>
+
+        <section id="report-supporting" class="report-supporting" aria-live="polite"></section>
+
+        <section class="report-section">
+            <h2 class="section-heading">Completed Work <span id="completed-count" class="section-count"></span></h2>
+            <div id="completed-carousel" class="report-carousel"></div>
+            <p id="completed-empty" class="empty-state" hidden>No completed repairs yet.</p>
+        </section>
+
+        <section class="report-section" id="upcoming-section" hidden>
+            <h2 class="section-heading">Upcoming Work <span class="section-count section-count--muted">not included in savings totals</span></h2>
+            <div id="upcoming-carousel" class="report-carousel"></div>
+        </section>
+    </main>
+
+    <footer class="report-footer">
+        <p id="report-methodology" class="methodology"></p>
+        <p class="report-generated"><span id="report-generated-at"></span></p>
+    </footer>
+
+    <div id="viewer" class="viewer no-print" aria-hidden="true" role="dialog" aria-modal="true">
+        <div class="viewer-backdrop" data-close></div>
+        <div class="viewer-panel">
+            <button class="btn btn-icon viewer-close" aria-label="Close image" data-close>&times;</button>
+            <img id="viewer-img" alt="" />
+        </div>
+    </div>
+
+    <script src="./metrics.js"></script>
+    <script src="./report.js" defer></script>
+</body>
+</html>
