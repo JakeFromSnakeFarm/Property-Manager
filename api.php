@@ -145,6 +145,7 @@ function sanitize_report_item($it) {
         'labor_time' => floatval($it['labor_time'] ?? 0),
         'market_estimate' => $market,
         'amount_reimbursed' => $reimbursed,
+        'asking_for_reimbursement' => !!($it['asking_for_reimbursement'] ?? false),
         'item_savings' => $saved,
         'potential_savings' => $potential,
         'value_added_low' => floatval($it['value_added_low'] ?? 0),

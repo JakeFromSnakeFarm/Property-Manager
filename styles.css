@@ -155,6 +155,82 @@ body {
   color: var(--text);
 }
 
+.metrics-debug {
+  margin: 0 16px 10px;
+  border: 1px dashed var(--muted);
+  border-radius: var(--radius);
+  background: var(--panel);
+  font-size: 12px;
+}
+
+.metrics-debug summary {
+  cursor: pointer;
+  padding: 8px 12px;
+  font-weight: 700;
+  color: var(--subtle);
+  user-select: none;
+}
+
+.metrics-debug-body {
+  padding: 0 12px 12px;
+  display: grid;
+  gap: 12px;
+}
+
+.debug-block {
+  border: 1px solid var(--muted);
+  border-radius: 8px;
+  padding: 10px;
+  background: var(--bg);
+}
+
+.debug-block h4 {
+  margin: 0 0 8px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--subtle);
+}
+
+.debug-formula {
+  font-family: ui-monospace, monospace;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--text);
+  margin: 0 0 8px;
+}
+
+.debug-table-wrap {
+  overflow-x: auto;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.debug-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+.debug-table th,
+.debug-table td {
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--muted);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.debug-table th {
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  color: var(--subtle);
+  font-weight: 600;
+}
+
+.debug-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.debug-note { margin: 0; font-size: 11px; color: var(--subtle); line-height: 1.45; }
+
 /* Filters */
 .filters-bar {
   display: flex;

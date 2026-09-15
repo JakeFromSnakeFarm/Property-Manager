@@ -141,7 +141,7 @@ function renderCards() {
         savedEl.textContent = `Saved ${fmt(im.saved)}`;
         savedEl.hidden = false;
       } else if (!im.done && im.potential > 0) {
-        savedEl.textContent = `Potential ${fmt(im.potential)}`;
+        savedEl.textContent = `Est. ${fmt(im.potential)}`;
         savedEl.style.color = 'var(--warn)';
         savedEl.hidden = false;
       } else {
@@ -196,7 +196,9 @@ function toTitle(s) {
 }
 
 function updateMetrics() {
+  const legacy = Metrics.computeLegacyMetrics(items, config);
   const m = Metrics.computeMetrics(items, config);
+  const breakdown = Metrics.computeMetricsBreakdown(items, config);
 
   const perDayEl = document.getElementById('metric-perday');
   const perDaySub = document.getElementById('metric-perday-sub');
@@ -208,21 +210,15 @@ function updateMetrics() {
   const completedEl = document.getElementById('metric-completed');
   const openSub = document.getElementById('metric-open-sub');
 
-  const leadCost = m.netDailyCost < 0 ? m.netDailyCost : m.costPerDay;
-  const leadCostLabel = m.netDailyCost < 0 ? 'Net gain per day' : 'Cost per day';
-
-  if (perDayEl) perDayEl.textContent = fmt(Math.abs(leadCost));
+  // Hero tiles: original totals (all items market − reimb-flag costs; per-day from reimb-flag only)
+  if (perDayEl) perDayEl.textContent = fmt(legacy.costPerDay);
   if (perDaySub) {
-    perDaySub.textContent = m.netDailyCost < 0
-      ? `${leadCostLabel} · property gained more than reimbursed`
-      : `${fmt(m.totalReimbursed)} total reimbursed · ${m.days} days`;
+    perDaySub.textContent = `${fmt(legacy.totalReimbFlagged)} reimbursed (flagged) · ${legacy.days} days`;
   }
 
-  if (savedEl) savedEl.textContent = fmt(m.totalSavings);
+  if (savedEl) savedEl.textContent = fmt(legacy.moneySaved);
   if (savedSub) {
-    savedSub.textContent = m.contractorCostAvoided > 0
-      ? `${fmt(m.totalSavings)} saved on ${fmt(m.contractorCostAvoided)} of contractor work`
-      : 'Completed repairs vs market pricing';
+    savedSub.textContent = `${fmt(legacy.totalMarketAll)} market est (all items) − ${fmt(legacy.totalReimbFlagged)} reimbursed`;
   }
 
   if (valueEl) {
@@ -239,7 +235,7 @@ function updateMetrics() {
   }
 
   if (completedEl) completedEl.textContent = String(m.completedCount);
-  if (openSub) openSub.textContent = `${m.openCount} open · ${fmt(m.potentialSavingsTotal)} potential savings`;
+  if (openSub) openSub.textContent = `${m.openCount} open · ${fmt(m.potentialSavingsTotal)} estimated savings`;
 
   const partsEl = document.getElementById('insight-parts');
   const netEl = document.getElementById('insight-net-daily');
@@ -275,11 +271,89 @@ function updateMetrics() {
   if (potentialEl) {
     if (m.potentialSavingsTotal > 0) {
       potentialEl.hidden = false;
-      potentialEl.textContent = `Potential savings (open): ${fmt(m.potentialSavingsTotal)}`;
+      potentialEl.textContent = `Estimated savings (open): ${fmt(m.potentialSavingsTotal)}`;
     } else {
       potentialEl.hidden = true;
     }
   }
+
+  renderMetricsDebug(breakdown);
+}
+
+function renderMetricsDebug(b) {
+  const el = document.getElementById('metrics-debug-body');
+  if (!el) return;
+  const { legacy, current, summary, rows } = b;
+
+  const rowHtml = rows.map((r) => `
+    <tr>
+      <td>${escapeHtml(r.title)}</td>
+      <td>${escapeHtml(r.status)}</td>
+      <td>${r.reimbFlag ? 'yes' : '—'}</td>
+      <td class="num">${fmt(r.market)}</td>
+      <td class="num">${fmt(r.reimbursed)}</td>
+      <td class="num">${r.done ? fmt(r.itemSaved) : fmt(r.estimatedOpen)}</td>
+      <td>${r.done ? 'done' : 'open'}</td>
+    </tr>
+  `).join('');
+
+  el.innerHTML = `
+    <p class="debug-note">Hero tiles use the <strong>legacy</strong> formula (same as the original app). Expand sections below to compare with the completed-only formula and per-item lines.</p>
+
+    <div class="debug-block">
+      <h4>Legacy — hero totals (original app)</h4>
+      <p class="debug-formula">${escapeHtml(summary.legacyFormula)}</p>
+      <p class="debug-formula">${escapeHtml(summary.legacyPerDayFormula)}</p>
+      <p class="debug-note">Includes market estimates from <em>all</em> items (${legacy.itemCount}). Subtracts only <code>my_cost</code> where “requesting reimbursement” is checked (${fmt(legacy.totalReimbFlagged)}). All-items my_cost sum (any flag): ${fmt(legacy.totalMyCostAll)}.</p>
+    </div>
+
+    <div class="debug-block">
+      <h4>Completed-only — alternate formula</h4>
+      <p class="debug-formula">${escapeHtml(summary.currentSavedFormula)}</p>
+      <p class="debug-formula">${escapeHtml(summary.currentPerDayFormula)}</p>
+      <p class="debug-note">Only ${current.completedCount} completed/closed items. Open items add ${fmt(summary.openMarketAll)} market est but are excluded here. Delta vs legacy saved: ${fmt(summary.deltaSaved)} · delta per-day: ${fmt(summary.deltaPerDay)}.</p>
+    </div>
+
+    <div class="debug-block">
+      <h4>Summations</h4>
+      <p class="debug-formula">
+        All items market: ${fmt(legacy.totalMarketAll)}<br>
+        Open items market: ${fmt(summary.openMarketAll)} · open my_cost: ${fmt(summary.openMyCostAll)}<br>
+        Completed market: ${fmt(summary.completedMarket)} · completed my_cost: ${fmt(summary.completedReimbursed)}<br>
+        Completed per-item savings sum: ${fmt(summary.completedSavedSum)}<br>
+        Reimb-flag my_cost (legacy denominator): ${fmt(legacy.totalReimbFlagged)}<br>
+        Estimated savings (open only): ${fmt(current.potentialSavingsTotal)}
+      </p>
+    </div>
+
+    <div class="debug-block">
+      <h4>Per-item lines</h4>
+      <div class="debug-table-wrap">
+        <table class="debug-table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Status</th>
+              <th>Reimb?</th>
+              <th>Market</th>
+              <th>my_cost</th>
+              <th>Saved/Est.</th>
+              <th>Bucket</th>
+            </tr>
+          </thead>
+          <tbody>${rowHtml}</tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+function escapeHtml(s) {
+  return String(s ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 function updateDataQuality() {
@@ -476,7 +550,7 @@ function updateFormSavingsPreview() {
     preview.hidden = false;
     preview.textContent = Metrics.isDone(vals.status)
       ? `Homeowner saves ${fmt(saved)} vs contractor estimate of ${fmt(market)}`
-      : `Potential savings: ${fmt(saved)} vs contractor estimate of ${fmt(market)}`;
+      : `Estimated savings: ${fmt(saved)} vs contractor estimate of ${fmt(market)}`;
   } else {
     preview.hidden = true;
   }

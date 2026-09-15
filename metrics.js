@@ -87,6 +87,104 @@
     return `${formatCurrency(low)} – ${formatCurrency(high)}`;
   }
 
+  /** Original app formula: all items' market est minus reimb-flag my_cost only. */
+  function computeLegacyMetrics(items, config, now = new Date()) {
+    const cfg = mergeConfig(config);
+    const days = trackingDays(cfg, now);
+    let totalMarketAll = 0;
+    let totalReimbFlagged = 0;
+    let totalMyCostAll = 0;
+    let itemCount = 0;
+
+    for (const item of items || []) {
+      itemCount += 1;
+      const market = marketEstimate(item);
+      const reimbursed = amountReimbursed(item);
+      totalMarketAll += market;
+      totalMyCostAll += reimbursed;
+      if (item.asking_for_reimbursement) {
+        totalReimbFlagged += reimbursed;
+      }
+    }
+
+    const moneySaved = Math.max(0, totalMarketAll - totalReimbFlagged);
+    const costPerDay = totalReimbFlagged / days;
+
+    return {
+      days,
+      trackingStart: cfg.tracking_start,
+      itemCount,
+      totalMarketAll,
+      totalReimbFlagged,
+      totalMyCostAll,
+      moneySaved,
+      costPerDay,
+      costPerMonth: costPerDay * 30,
+      config: cfg,
+    };
+  }
+
+  function computeMetricsBreakdown(items, config, now = new Date()) {
+    const legacy = computeLegacyMetrics(items, config, now);
+    const current = computeMetrics(items, config, now);
+    const fmt = formatCurrency;
+
+    const rows = (items || []).map((item) => {
+      const market = marketEstimate(item);
+      const reimbursed = amountReimbursed(item);
+      const done = isDone(item.status);
+      return {
+        id: item.id,
+        title: item.title || '(untitled)',
+        status: item.status || 'new',
+        done,
+        market,
+        reimbursed,
+        reimbFlag: !!item.asking_for_reimbursement,
+        itemSaved: itemSavings(item),
+        estimatedOpen: potentialSavings(item),
+        countsLegacyMarket: true,
+        countsLegacyReimb: !!item.asking_for_reimbursement,
+        countsCurrent: done,
+      };
+    });
+
+    let openMarketAll = 0;
+    let openMyCostAll = 0;
+    let completedMarket = 0;
+    let completedReimbursed = 0;
+    let completedSavedSum = 0;
+    for (const r of rows) {
+      if (r.done) {
+        completedMarket += r.market;
+        completedReimbursed += r.reimbursed;
+        completedSavedSum += r.itemSaved;
+      } else {
+        openMarketAll += r.market;
+        openMyCostAll += r.reimbursed;
+      }
+    }
+
+    return {
+      legacy,
+      current,
+      rows,
+      summary: {
+        openMarketAll,
+        openMyCostAll,
+        completedMarket,
+        completedReimbursed,
+        completedSavedSum,
+        legacyFormula: `${fmt(legacy.totalMarketAll)} (all market) − ${fmt(legacy.totalReimbFlagged)} (reimb-flag my_cost) = ${fmt(legacy.moneySaved)}`,
+        legacyPerDayFormula: `${fmt(legacy.totalReimbFlagged)} ÷ ${legacy.days} days = ${fmt(legacy.costPerDay)}/day`,
+        currentSavedFormula: `${fmt(current.contractorCostAvoided)} (completed market) − ${fmt(current.totalReimbursed)} (completed my_cost) = ${fmt(current.totalSavings)} per-item sum`,
+        currentPerDayFormula: `${fmt(current.totalReimbursed)} (completed my_cost) ÷ ${legacy.days} days = ${fmt(current.costPerDay)}/day`,
+        deltaSaved: current.totalSavings - legacy.moneySaved,
+        deltaPerDay: current.costPerDay - legacy.costPerDay,
+      },
+    };
+  }
+
   function computeMetrics(items, config, now = new Date()) {
     const cfg = mergeConfig(config);
     const days = trackingDays(cfg, now);
@@ -218,6 +316,8 @@
     formatPercent,
     formatValueRange,
     computeMetrics,
+    computeLegacyMetrics,
+    computeMetricsBreakdown,
     itemMetrics,
     needsDataReview,
   };

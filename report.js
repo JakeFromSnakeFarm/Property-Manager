@@ -22,6 +22,7 @@ function adaptReportItem(r) {
     labor_cost_estimate: lt > 0 ? laborComponent / lt : laborComponent,
     parts_cost: parts,
     my_cost: r.amount_reimbursed || 0,
+    asking_for_reimbursement: !!r.asking_for_reimbursement,
     value_added_low: r.value_added_low || 0,
     value_added_high: r.value_added_high || 0,
     value_added_confidence: r.value_added_confidence || '',
@@ -43,6 +44,7 @@ async function loadReport() {
 }
 
 function renderReport(items, config, generatedAt) {
+  const legacy = Metrics.computeLegacyMetrics(items, config);
   const m = Metrics.computeMetrics(items, config);
   const done = items.filter(it => Metrics.isDone(it.status));
   const open = items.filter(it => Metrics.isOpen(it.status));
@@ -60,17 +62,15 @@ function renderReport(items, config, generatedAt) {
       : 'Live data';
   }
 
-  const leadCost = m.netDailyCost < 0 ? Math.abs(m.netDailyCost) : m.costPerDay;
   const heroPerDay = document.getElementById('hero-perday');
   const heroPerDaySub = document.getElementById('hero-perday-sub');
-  heroPerDay.textContent = fmt(leadCost);
-  heroPerDaySub.textContent = m.netDailyCost < 0
-    ? 'Net property gain per day after value added'
-    : `${fmt(m.totalReimbursed)} total reimbursed · ${m.days} days tracked`;
+  heroPerDay.textContent = fmt(legacy.costPerDay);
+  heroPerDaySub.textContent =
+    `${fmt(legacy.totalReimbFlagged)} reimbursed (flagged) · ${legacy.days} days tracked`;
 
-  document.getElementById('hero-saved').textContent = fmt(m.totalSavings);
+  document.getElementById('hero-saved').textContent = fmt(legacy.moneySaved);
   document.getElementById('hero-saved-sub').textContent =
-    `${fmt(m.totalSavings)} saved on ${fmt(m.contractorCostAvoided)} of completed contractor work`;
+    `${fmt(legacy.totalMarketAll)} market est (all items) − ${fmt(legacy.totalReimbFlagged)} reimbursed`;
 
   renderSupporting(m, config);
   renderCarousel('completed-carousel', done, config, false);
@@ -142,7 +142,7 @@ function renderSupporting(m, config) {
 
   if (m.potentialSavingsTotal > 0) {
     tiles.push({
-      label: 'Potential Savings',
+      label: 'Estimated Savings',
       value: fmt(m.potentialSavingsTotal),
       sub: 'open work (not confirmed)',
     });
@@ -195,7 +195,7 @@ function renderCarousel(containerId, list, config, isPotential) {
     const saved = document.createElement('div');
     saved.className = 'report-card-saved';
     if (isPotential && im.potential > 0) {
-      saved.textContent = `Potential savings ${fmt(im.potential)}`;
+      saved.textContent = `Est. savings ${fmt(im.potential)}`;
       saved.style.color = 'var(--warn)';
     } else if (im.saved > 0) {
       saved.textContent = `Saved ${fmt(im.saved)} vs contractor`;
