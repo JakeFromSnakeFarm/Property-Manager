@@ -97,6 +97,8 @@ function renderReport(items, config, generatedAt) {
     upcomingSection.hidden = true;
   }
 
+  window.ScrollHints?.initScrollHints();
+
   document.getElementById('report-methodology').textContent =
     'Savings compare completed work to typical contractor market pricing. Cost per day spreads reimbursed amounts over the tracking period. Property value estimates are manual ranges included only when marked for the total. Open/upcoming work is shown separately and is not counted in confirmed savings.';
 
