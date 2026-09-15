@@ -109,8 +109,9 @@
 
     const moneySaved = Math.max(0, totalMarketAll - totalReimbFlagged);
     const costPerDay = totalReimbFlagged / days;
+    // (contractor est − what you cost) ÷ contractor est — e.g. ($1000 − $600) ÷ $1000 = 40% cheaper
     const cheaperThanContractorsPct = totalMarketAll > 0
-      ? (moneySaved / totalMarketAll) * 100
+      ? (Math.max(0, totalMarketAll - totalMyCostAll) / totalMarketAll) * 100
       : 0;
 
     return {

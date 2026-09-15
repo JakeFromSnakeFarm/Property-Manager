@@ -219,8 +219,9 @@ function updateMetrics() {
   const valueEl = document.getElementById('metric-value-added');
   const rateWrap = document.getElementById('metric-rate-wrap');
   const rateEl = document.getElementById('metric-rate');
-  const completedEl = document.getElementById('metric-completed');
-  const openSub = document.getElementById('metric-open-sub');
+  const completedSavedEl = document.getElementById('metric-completed-saved');
+  const completedSubEl = document.getElementById('metric-completed-sub');
+  const openEstEl = document.getElementById('metric-open-est');
 
   // Current cost/day = completed reimbursements only
   if (perDayEl) perDayEl.textContent = fmt(m.costPerDay);
@@ -247,8 +248,17 @@ function updateMetrics() {
     }
   }
 
-  if (completedEl) completedEl.textContent = String(m.completedCount);
-  if (openSub) openSub.textContent = `${m.openCount} open · ${fmt(m.potentialSavingsTotal)} estimated savings`;
+  if (completedSavedEl) {
+    completedSavedEl.textContent = fmt(m.totalSavings);
+  }
+  if (completedSubEl) {
+    completedSubEl.textContent = `${m.completedCount} completed · ${fmt(m.contractorCostAvoided)} contractor − ${fmt(m.totalReimbursed)} reimbursed`;
+  }
+  if (openEstEl) {
+    openEstEl.textContent = m.openCount > 0
+      ? `${m.openCount} open · ${fmt(m.potentialSavingsTotal)} est. savings remaining`
+      : 'All tracked projects completed';
+  }
 
   const partsEl = document.getElementById('insight-parts');
   const netEl = document.getElementById('insight-net-daily');
@@ -311,7 +321,7 @@ function renderMetricsDebug(b) {
   `).join('');
 
   el.innerHTML = `
-    <p class="debug-note">Hero: <strong>Money To Be Saved</strong> uses legacy (all items). <strong>Current Cost/Day</strong> uses completed reimbursements only. <strong>Your Savings %</strong> = legacy saved ÷ all market est. Expand below for full breakdown.</p>
+    <p class="debug-note">Hero: <strong>Your Savings %</strong> = (all market − all my_cost) ÷ all market. <strong>Completed Repairs</strong> saved = sum(completed market − completed my_cost). Expand below for full breakdown.</p>
 
     <div class="debug-block">
       <h4>Legacy — hero totals (original app)</h4>

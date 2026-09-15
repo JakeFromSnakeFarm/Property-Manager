@@ -65,4 +65,16 @@ const zeroCost = {
 };
 assert(Metrics.itemSavings(zeroCost) === 0, 'zero cost item');
 
+const pctItems = [{
+  status: 'completed',
+  labor_time: 10,
+  labor_cost_estimate: 100,
+  parts_cost: 0,
+  my_cost: 600,
+  asking_for_reimbursement: false,
+}];
+const pctLegacy = Metrics.computeLegacyMetrics(pctItems, config);
+assert(pctLegacy.totalMarketAll === 1000, 'pct market');
+assert(pctLegacy.cheaperThanContractorsPct === 40, '40% cheaper at 600 vs 1000');
+
 console.log('All metrics tests passed.');

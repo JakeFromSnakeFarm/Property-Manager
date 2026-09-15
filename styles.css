@@ -116,6 +116,9 @@ body {
 .metric-tile--cost { border-color: color-mix(in srgb, var(--cost) 40%, var(--muted)); background: color-mix(in srgb, var(--cost-soft) 50%, var(--panel)); }
 .metric-tile--savings { border-color: color-mix(in srgb, var(--success) 40%, var(--muted)); background: color-mix(in srgb, var(--success-soft) 50%, var(--panel)); }
 .metric-tile--rate { border-color: color-mix(in srgb, var(--success) 30%, var(--muted)); background: color-mix(in srgb, var(--success-soft) 35%, var(--panel)); }
+.metric-tile--completed { border-color: color-mix(in srgb, var(--success) 35%, var(--muted)); background: color-mix(in srgb, var(--success-soft) 40%, var(--panel)); }
+.metric-value--saved { color: var(--success); font-size: 22px; }
+.metric-sub--muted { opacity: 0.85; font-size: 10px; }
 
 .metric-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--subtle); }
 .metric-value { font-size: 24px; font-weight: 800; letter-spacing: -0.03em; margin-top: 2px; }
