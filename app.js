@@ -140,9 +140,13 @@ function renderCards() {
       const savedBreakdown = node.querySelector('.card-saved-breakdown');
       savedBanner.classList.remove('is-est', 'is-muted');
 
-      if (im.done && im.market > 0) {
+      if (im.done && im.saved > 0) {
         savedAmount.textContent = `Saved ${fmt(im.saved)}`;
         savedBreakdown.textContent = `${fmt(im.market)} contractor − ${fmt(im.reimbursed)} reimbursed`;
+      } else if (im.done && im.reimbursed > 0) {
+        savedBanner.classList.add('is-muted');
+        savedAmount.textContent = `Reimbursed ${fmt(im.reimbursed)}`;
+        savedBreakdown.textContent = im.market > 0 ? `${fmt(im.market)} contractor est` : ' ';
       } else if (!im.done && im.potential > 0) {
         savedBanner.classList.add('is-est');
         savedAmount.textContent = `Est. ${fmt(im.potential)}`;
