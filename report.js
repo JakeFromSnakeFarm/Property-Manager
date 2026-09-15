@@ -47,6 +47,11 @@ function renderReport(items, config, generatedAt) {
   const legacy = Metrics.computeLegacyMetrics(items, config);
   const m = Metrics.computeMetrics(items, config);
   const done = items.filter(it => Metrics.isDone(it.status));
+  done.sort((a, b) => {
+    const savingsDiff = Metrics.itemSavings(b) - Metrics.itemSavings(a);
+    if (savingsDiff !== 0) return savingsDiff;
+    return new Date(b.updated_at || b.created_at).getTime() - new Date(a.updated_at || a.created_at).getTime();
+  });
   const open = items.filter(it => Metrics.isOpen(it.status));
 
   document.getElementById('report-title').textContent = config.report_title;
