@@ -22,24 +22,24 @@
 
         <section id="metrics-hero" class="metrics-hero" aria-live="polite">
             <div class="metric-tile metric-tile--cost">
-                <div class="metric-label">Cost Per Day</div>
+                <div class="metric-label">Current Cost Per Day</div>
                 <div id="metric-perday" class="metric-value">$0.00</div>
                 <div id="metric-perday-sub" class="metric-sub">—</div>
             </div>
             <div class="metric-tile metric-tile--savings">
-                <div class="metric-label">Total Money Saved</div>
+                <div class="metric-label">Money To Be Saved</div>
                 <div id="metric-saved" class="metric-value">$0.00</div>
-                <div id="metric-saved-sub" class="metric-sub">—</div>
+                <div id="metric-saved-sub" class="metric-sub">Past and future projects</div>
             </div>
             <div class="metric-tile">
                 <div class="metric-label">Property Value Added</div>
                 <div id="metric-value-added" class="metric-value metric-value--sm">—</div>
                 <div class="metric-sub">Completed work only</div>
             </div>
-            <div class="metric-tile" id="metric-rate-wrap" hidden>
-                <div class="metric-label">Savings Rate</div>
+            <div class="metric-tile metric-tile--rate" id="metric-rate-wrap" hidden>
+                <div class="metric-label">Your Savings</div>
                 <div id="metric-rate" class="metric-value metric-value--sm">0%</div>
-                <div class="metric-sub">vs contractor pricing</div>
+                <div class="metric-sub">cheaper than contractors</div>
             </div>
             <div class="metric-tile">
                 <div class="metric-label">Completed Repairs</div>
@@ -120,6 +120,10 @@
             <div class="card-line2">
                 <span class="room"></span>
                 <span class="due"></span>
+            </div>
+            <div class="card-saved-banner" hidden>
+                <div class="card-saved-amount"></div>
+                <div class="card-saved-breakdown"></div>
             </div>
             <div class="card-metrics">
                 <span class="card-saved"></span>

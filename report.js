@@ -64,15 +64,15 @@ function renderReport(items, config, generatedAt) {
 
   const heroPerDay = document.getElementById('hero-perday');
   const heroPerDaySub = document.getElementById('hero-perday-sub');
-  heroPerDay.textContent = fmt(legacy.costPerDay);
+  heroPerDay.textContent = fmt(m.costPerDay);
   heroPerDaySub.textContent =
-    `${fmt(legacy.totalReimbFlagged)} reimbursed (flagged) · ${legacy.days} days tracked`;
+    `${fmt(m.totalReimbursed)} completed reimbursements · ${m.days} days tracked`;
 
   document.getElementById('hero-saved').textContent = fmt(legacy.moneySaved);
   document.getElementById('hero-saved-sub').textContent =
-    `${fmt(legacy.totalMarketAll)} market est (all items) − ${fmt(legacy.totalReimbFlagged)} reimbursed`;
+    `${fmt(legacy.totalMarketAll)} contractor est − ${fmt(legacy.totalReimbFlagged)} reimbursed · past & future`;
 
-  renderSupporting(m, config);
+  renderSupporting(m, legacy, config);
   renderCarousel('completed-carousel', done, config, false);
   document.getElementById('completed-count').textContent = `(${done.length})`;
   document.getElementById('completed-empty').hidden = done.length > 0;
@@ -92,23 +92,23 @@ function renderReport(items, config, generatedAt) {
     `Report generated ${new Date(generatedAt || Date.now()).toLocaleString()}`;
 }
 
-function renderSupporting(m, config) {
+function renderSupporting(m, legacy, config) {
   const el = document.getElementById('report-supporting');
   const tiles = [];
+
+  if (legacy.totalMarketAll > 0) {
+    tiles.push({
+      label: 'Your Savings',
+      value: fmtPct(legacy.cheaperThanContractorsPct),
+      sub: 'cheaper than contractors',
+    });
+  }
 
   tiles.push({
     label: 'Contractor Cost Handled',
     value: fmt(m.contractorCostAvoided),
     sub: 'market value of completed work',
   });
-
-  if (m.savingsRate >= 30) {
-    tiles.push({
-      label: 'Savings Rate',
-      value: fmtPct(m.savingsRate),
-      sub: 'vs contractor pricing',
-    });
-  }
 
   if (m.valueAddedLowTotal > 0 || m.valueAddedHighTotal > 0) {
     tiles.push({
@@ -192,24 +192,24 @@ function renderCarousel(containerId, list, config, isPotential) {
     meta.textContent = parts.join(' · ');
     body.appendChild(meta);
 
-    const saved = document.createElement('div');
-    saved.className = 'report-card-saved';
     if (isPotential && im.potential > 0) {
+      const saved = document.createElement('div');
+      saved.className = 'report-card-saved';
       saved.textContent = `Est. savings ${fmt(im.potential)}`;
       saved.style.color = 'var(--warn)';
-    } else if (im.saved > 0) {
-      saved.textContent = `Saved ${fmt(im.saved)} vs contractor`;
-    } else {
-      saved.textContent = 'No savings recorded';
-      saved.style.color = 'var(--subtle)';
-    }
-    body.appendChild(saved);
-
-    if (im.reimbursed > 0) {
-      const reimb = document.createElement('div');
-      reimb.className = 'report-card-reimb';
-      reimb.textContent = `Reimbursed ${fmt(im.reimbursed)}`;
-      body.appendChild(reimb);
+      body.appendChild(saved);
+    } else if (!isPotential && im.market > 0) {
+      const banner = document.createElement('div');
+      banner.className = 'report-card-saved-banner';
+      const amount = document.createElement('div');
+      amount.className = 'report-card-saved-amount';
+      amount.textContent = `Saved ${fmt(im.saved)}`;
+      const breakdown = document.createElement('div');
+      breakdown.className = 'report-card-saved-breakdown';
+      breakdown.textContent = `${fmt(im.market)} contractor − ${fmt(im.reimbursed)} reimbursed`;
+      banner.appendChild(amount);
+      banner.appendChild(breakdown);
+      body.appendChild(banner);
     }
 
     if (it.resolution) {

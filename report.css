@@ -215,6 +215,28 @@
   color: var(--success);
 }
 
+.report-card-saved-banner {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--success-soft);
+  border: 1px solid color-mix(in srgb, var(--success) 45%, var(--muted));
+}
+
+.report-card-saved-amount {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--success);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.report-card-saved-breakdown {
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: color-mix(in srgb, var(--success) 70%, var(--subtle));
+}
+
 .report-card-reimb {
   font-size: 11px;
   color: var(--subtle);

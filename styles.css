@@ -115,6 +115,7 @@ body {
 
 .metric-tile--cost { border-color: color-mix(in srgb, var(--cost) 40%, var(--muted)); background: color-mix(in srgb, var(--cost-soft) 50%, var(--panel)); }
 .metric-tile--savings { border-color: color-mix(in srgb, var(--success) 40%, var(--muted)); background: color-mix(in srgb, var(--success-soft) 50%, var(--panel)); }
+.metric-tile--rate { border-color: color-mix(in srgb, var(--success) 30%, var(--muted)); background: color-mix(in srgb, var(--success-soft) 35%, var(--panel)); }
 
 .metric-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--subtle); }
 .metric-value { font-size: 24px; font-weight: 800; letter-spacing: -0.03em; margin-top: 2px; }
@@ -397,6 +398,29 @@ main { padding: 12px 16px 24px; }
 }
 
 .card-line2 { justify-content: space-between; }
+
+.card-saved-banner {
+  margin-top: 2px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--success-soft);
+  border: 1px solid color-mix(in srgb, var(--success) 45%, var(--muted));
+}
+
+.card-saved-amount {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--success);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.card-saved-breakdown {
+  margin-top: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  color: color-mix(in srgb, var(--success) 70%, var(--subtle));
+}
 
 .card-metrics {
   display: flex;

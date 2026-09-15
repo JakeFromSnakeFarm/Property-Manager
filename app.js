@@ -135,24 +135,36 @@ function renderCards() {
       node.querySelector('.room').textContent = it.room || '';
       node.querySelector('.due').textContent = it.due_by ? `Due ${it.due_by}` : '';
 
+      const savedBanner = node.querySelector('.card-saved-banner');
+      const savedAmount = node.querySelector('.card-saved-amount');
+      const savedBreakdown = node.querySelector('.card-saved-breakdown');
       const savedEl = node.querySelector('.card-saved');
       const reimbEl = node.querySelector('.card-reimb');
-      if (im.done && im.saved > 0) {
-        savedEl.textContent = `Saved ${fmt(im.saved)}`;
-        savedEl.hidden = false;
-      } else if (!im.done && im.potential > 0) {
-        savedEl.textContent = `Est. ${fmt(im.potential)}`;
-        savedEl.style.color = 'var(--warn)';
-        savedEl.hidden = false;
-      } else {
-        savedEl.hidden = true;
-      }
+      const metricsRow = node.querySelector('.card-metrics');
 
-      if (im.reimbursed > 0) {
-        reimbEl.textContent = `Reimb ${fmt(im.reimbursed)}`;
-        reimbEl.hidden = false;
+      if (im.done && im.market > 0) {
+        savedBanner.hidden = false;
+        savedAmount.textContent = `Saved ${fmt(im.saved)}`;
+        savedBreakdown.textContent = `${fmt(im.market)} contractor − ${fmt(im.reimbursed)} reimbursed`;
+        if (metricsRow) metricsRow.hidden = true;
       } else {
-        reimbEl.hidden = true;
+        savedBanner.hidden = true;
+        if (metricsRow) metricsRow.hidden = false;
+        savedEl.className = 'card-saved';
+        savedEl.style.color = '';
+        if (!im.done && im.potential > 0) {
+          savedEl.textContent = `Est. ${fmt(im.potential)}`;
+          savedEl.style.color = 'var(--warn)';
+          savedEl.hidden = false;
+        } else {
+          savedEl.hidden = true;
+        }
+        if (im.reimbursed > 0) {
+          reimbEl.textContent = `Reimb ${fmt(im.reimbursed)}`;
+          reimbEl.hidden = false;
+        } else {
+          reimbEl.hidden = true;
+        }
       }
 
       const valChip = node.querySelector('.value-chip');
@@ -210,15 +222,16 @@ function updateMetrics() {
   const completedEl = document.getElementById('metric-completed');
   const openSub = document.getElementById('metric-open-sub');
 
-  // Hero tiles: original totals (all items market − reimb-flag costs; per-day from reimb-flag only)
-  if (perDayEl) perDayEl.textContent = fmt(legacy.costPerDay);
+  // Current cost/day = completed reimbursements only
+  if (perDayEl) perDayEl.textContent = fmt(m.costPerDay);
   if (perDaySub) {
-    perDaySub.textContent = `${fmt(legacy.totalReimbFlagged)} reimbursed (flagged) · ${legacy.days} days`;
+    perDaySub.textContent = `${fmt(m.totalReimbursed)} completed reimbursements · ${m.days} days`;
   }
 
+  // Money to be saved = legacy total (all projects, past + future)
   if (savedEl) savedEl.textContent = fmt(legacy.moneySaved);
   if (savedSub) {
-    savedSub.textContent = `${fmt(legacy.totalMarketAll)} market est (all items) − ${fmt(legacy.totalReimbFlagged)} reimbursed`;
+    savedSub.textContent = `${fmt(legacy.totalMarketAll)} contractor est − ${fmt(legacy.totalReimbFlagged)} reimbursed · past & future`;
   }
 
   if (valueEl) {
@@ -226,9 +239,9 @@ function updateMetrics() {
   }
 
   if (rateWrap && rateEl) {
-    if (m.savingsRate >= 30) {
+    if (legacy.totalMarketAll > 0) {
       rateWrap.hidden = false;
-      rateEl.textContent = fmtPct(m.savingsRate);
+      rateEl.textContent = fmtPct(legacy.cheaperThanContractorsPct);
     } else {
       rateWrap.hidden = true;
     }
@@ -298,7 +311,7 @@ function renderMetricsDebug(b) {
   `).join('');
 
   el.innerHTML = `
-    <p class="debug-note">Hero tiles use the <strong>legacy</strong> formula (same as the original app). Expand sections below to compare with the completed-only formula and per-item lines.</p>
+    <p class="debug-note">Hero: <strong>Money To Be Saved</strong> uses legacy (all items). <strong>Current Cost/Day</strong> uses completed reimbursements only. <strong>Your Savings %</strong> = legacy saved ÷ all market est. Expand below for full breakdown.</p>
 
     <div class="debug-block">
       <h4>Legacy — hero totals (original app)</h4>

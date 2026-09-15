@@ -109,6 +109,9 @@
 
     const moneySaved = Math.max(0, totalMarketAll - totalReimbFlagged);
     const costPerDay = totalReimbFlagged / days;
+    const cheaperThanContractorsPct = totalMarketAll > 0
+      ? (moneySaved / totalMarketAll) * 100
+      : 0;
 
     return {
       days,
@@ -120,6 +123,7 @@
       moneySaved,
       costPerDay,
       costPerMonth: costPerDay * 30,
+      cheaperThanContractorsPct,
       config: cfg,
     };
   }
