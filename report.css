@@ -170,16 +170,10 @@
   width: 100%;
   max-width: 100%;
   min-width: 0;
-  overflow-x: auto;
   padding: 4px 2px 10px;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scrollbar-color: var(--muted) transparent;
 }
-
-.report-carousel::-webkit-scrollbar { height: 8px; }
-.report-carousel::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 999px; }
 
 .report-card {
   flex: 0 0 280px;
